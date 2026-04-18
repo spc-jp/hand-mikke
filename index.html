@@ -725,12 +725,26 @@ async function callAI(prompt){
 function parseJSON(r){return JSON.parse(r.replace(/```json|```/g,'').trim());}
 
 // ── デモデータ ──
-const DEMO = {
+const DEMO_SETTINGS = {
   brandName : 'てしごとAkko',
-  igAcc     : '@handmade_akko',
-  xAcc      : '@handmade_akko',
-  thAcc     : '@handmade_akko',
+  igAcc     : '@te_shigoto_akko',
+  xAcc      : '@te_shigoto_akko',
+  thAcc     : '@te_shigoto_akko',
   baseUrl   : 'https://akko-handmade.base.shop'
+};
+
+const DEMO_FORMS = {
+  // タブ①
+  p_appeal : '子育てが落ち着いた頃に出会ったアクセサリー作り。身につけるたびにちょっと気分が上がる、そんな毎日の小さな幸せを届けたくて制作しています。素材選びにこだわり、一点一点ていねいに仕上げています。',
+  p_works  : '天然石を使ったピアス・イヤリング、シルバーチェーンのネックレス',
+  // タブ②
+  po_name  : '天然石ラピスラズリ×シルバーチェーンのロングピアス',
+  po_detail: '素材：ラピスラズリ（天然石）・シルバー925チェーン　サイズ：全長約6cm　制作時間：約3時間',
+  po_story : '100個以上の石の中から、色と形と質感がいちばん美しいものだけを選びました。揺れるたびに光の角度が変わり、さりげなくでも存在感のあるデザインに仕上げています。普段使いにも、ちょっとしたお出かけにも合わせやすい一点です。',
+  po_price : '3,800円（税込）',
+  // タブ③
+  sn_point : '揺れるたびに表情が変わる、天然石ラピスラズリのロングピアス',
+  sn_igurl : 'https://www.instagram.com/te_shigoto_akko/'
 };
 
 function showDemoMsg(msg, isError=false){
@@ -738,29 +752,41 @@ function showDemoMsg(msg, isError=false){
   el.textContent = msg;
   el.className = 'demo-msg' + (isError ? ' error' : '');
   el.style.display = 'block';
-  setTimeout(() => { el.style.display = 'none'; }, 2800);
+  setTimeout(() => { el.style.display = 'none'; }, 3000);
 }
 
 function loadDemo(){
-  Object.entries(DEMO).forEach(([id, val]) => {
+  // 設定欄
+  Object.entries(DEMO_SETTINGS).forEach(([id, val]) => {
     const el = document.getElementById(id);
     if(el){ el.value = val; }
   });
-  // ジャンルもアクセサリーにリセット
+  // タブ①②③の入力欄
+  Object.entries(DEMO_FORMS).forEach(([id, val]) => {
+    const el = document.getElementById(id);
+    if(el){ el.value = val; }
+  });
+  // ジャンルをアクセサリーに
   document.querySelectorAll('.genre-btn').forEach(b => b.classList.remove('on'));
   document.querySelector('.genre-btn').classList.add('on');
   genre = 'アクセサリー・ピアス';
   saveSettings();
-  showDemoMsg('✅ デモデータを入力しました！タブ①から試してみてください。');
+  showDemoMsg('✅ デモデータを入力しました！タブ①から「生成する」を押してみてください🎀');
 }
 
 function clearDemo(){
+  // 設定欄クリア
   FIELDS.forEach(id => {
     const el = document.getElementById(id);
     if(el){ el.value = ''; }
     localStorage.removeItem('hmm_' + id);
   });
-  showDemoMsg('🗑️ 入力内容をクリアしました。');
+  // タブ入力欄クリア
+  Object.keys(DEMO_FORMS).forEach(id => {
+    const el = document.getElementById(id);
+    if(el){ el.value = ''; }
+  });
+  showDemoMsg('🗑️ すべての入力内容をクリアしました。');
 }
 
 async function genProfile(){
