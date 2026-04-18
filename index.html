@@ -101,7 +101,7 @@ body { font-family:var(--font-main); background:#FBF7FA; color:#3a2030; min-heig
   position:fixed; top:0; right:-420px; width:380px; max-width:95vw;
   height:100vh; background:#fff; box-shadow:-4px 0 30px rgba(0,0,0,0.18);
   z-index:500; transition:right 0.32s cubic-bezier(0.4,0,0.2,1);
-  overflow-y:auto; padding:24px 22px 40px;
+  overflow-y:auto; padding:114px 22px 40px;
 }
 .slide-panel.open { right:0; }
 .panel-backdrop {
@@ -140,6 +140,33 @@ body { font-family:var(--font-main); background:#FBF7FA; color:#3a2030; min-heig
 }
 .genre-btn.on { background:var(--p); border-color:var(--p); color:#fff; }
 .save-note { font-size:0.74em; color:#b09aaa; margin-top:10px; line-height:1.7; }
+.demo-bar {
+  display:flex; gap:8px; margin-top:18px; padding-top:16px;
+  border-top:2px dashed var(--p-accent);
+}
+.demo-btn {
+  flex:1; padding:10px 6px; border-radius:12px; font-family:var(--font-main);
+  font-size:0.82em; font-weight:700; cursor:pointer; transition:all 0.2s;
+  text-align:center; border:2px solid;
+}
+.demo-btn-fill {
+  background:var(--p-grad); color:#fff; border-color:transparent;
+  box-shadow:0 3px 10px rgba(193,53,132,0.25);
+}
+.demo-btn-fill:hover { transform:translateY(-1px); box-shadow:0 5px 14px rgba(193,53,132,0.35); }
+.demo-btn-clear {
+  background:#fff; color:#9a6080; border-color:#e8d0e0;
+}
+.demo-btn-clear:hover { background:#FDF0F8; border-color:var(--p); color:var(--p); }
+.demo-msg {
+  display:none; margin-top:10px; padding:9px 14px;
+  background:#E8F8F0; border:1.5px solid #80D4A8;
+  border-radius:10px; font-size:0.82em; color:#2E7A50;
+  text-align:center; font-weight:700;
+  animation: fadeIn 0.3s ease;
+}
+.demo-msg.error { background:#FFE8E8; border-color:#F5A0A0; color:#C03030; }
+@keyframes fadeIn { from{opacity:0;transform:translateY(-4px);} to{opacity:1;transform:translateY(0);} }
 
 /* ── USAGE PANEL ── */
 .usage-section { margin-bottom:18px; }
@@ -262,6 +289,70 @@ body { font-family:var(--font-main); background:#FBF7FA; color:#3a2030; min-heig
 .modal-link a { color:var(--p); }
 
 .footer { text-align:center; padding:20px; font-size:0.78em; color:#b09aaa; border-top:1px solid #F0E4EA; margin-top:10px; }
+
+/* ════════════════════════
+   スマホ対応 ( ~480px )
+════════════════════════ */
+@media (max-width: 480px) {
+
+  /* ヘッダー全体を少しコンパクトに */
+  body { padding-top: 100px; }
+
+  .app-header { padding: 0 12px; }
+
+  .header-top { padding: 10px 0 0; gap: 6px; }
+
+  /* タイトルを小さく */
+  .header-title { font-size: 1.15em; letter-spacing: 0.02em; }
+  .header-sub   { font-size: 0.70em; margin-top: 1px; }
+
+  /* ボタン：アイコン＋テキストを縦にコンパクト */
+  .hdr-btn { padding: 6px 10px; min-width: 60px; font-size: 0.68em; }
+  .hdr-btn-icon { font-size: 1.25em; }
+  .hdr-btns { gap: 6px; }
+
+  /* タブ文字を少し小さく */
+  .tab-nav-btn { font-size: 0.70em; padding: 9px 2px; }
+
+  /* メインコンテンツの余白調整 */
+  .main-wrap { padding: 14px 10px 40px; }
+
+  /* カード内余白を詰める */
+  .card { padding: 16px 14px; }
+
+  /* 生成ボタン */
+  .gen-btn { font-size: 0.92em; padding: 12px; }
+
+  /* 出力ボックス */
+  .out-box { font-size: 0.85em; padding: 12px 12px; }
+
+  /* コピーボタン */
+  .copy-btn { font-size: 0.8em; padding: 6px 14px; }
+
+  /* ジャンルボタン */
+  .genre-btn { font-size: 0.74em; padding: 6px 2px; }
+
+  /* 撮影Tipsのグリッドを1列に */
+  .tips-grid { grid-template-columns: 1fr; }
+
+  /* スライドパネルを全画面に近く */
+  .slide-panel { width: 100%; max-width: 100vw; right: -100%; padding-top: 100px; }
+  .slide-panel.open { right: 0; }
+
+  /* モーダル */
+  .modal-box { padding: 28px 20px; }
+}
+
+/* ════════════════════════
+   タブレット ( 481px〜768px )
+════════════════════════ */
+@media (min-width: 481px) and (max-width: 768px) {
+  body { padding-top: 108px; }
+  .header-title { font-size: 1.3em; }
+  .main-wrap { padding: 16px 14px 40px; }
+  .tips-grid { grid-template-columns: 1fr 1fr; }
+  .slide-panel { width: 90%; max-width: 90vw; }
+}
 </style>
 </head>
 <body>
@@ -315,6 +406,13 @@ body { font-family:var(--font-main); background:#FBF7FA; color:#3a2030; min-heig
     <button class="genre-btn"   onclick="pickGenre(this,'キャンドル・ソープ')">🕯️ キャンドル</button>
   </div>
   <div class="save-note">※ 設定は自動で保存されます。<br>一度入力すれば次回から自動入力されます。</div>
+
+  <!-- デモデータ -->
+  <div class="demo-bar">
+    <button class="demo-btn demo-btn-fill" onclick="loadDemo()">🎯 デモデータを入力</button>
+    <button class="demo-btn demo-btn-clear" onclick="clearDemo()">🗑️ クリア</button>
+  </div>
+  <div class="demo-msg" id="demoMsg"></div>
 </div>
 
 <!-- 使い方パネル -->
@@ -323,26 +421,49 @@ body { font-family:var(--font-main); background:#FBF7FA; color:#3a2030; min-heig
     <div class="sp-title">📖 使い方とできること</div>
     <button class="sp-close" onclick="closePanels()">✕</button>
   </div>
+
+  <!-- コンセプトメッセージ -->
+  <div style="background:var(--p-grad);border-radius:14px;padding:18px 16px;margin-bottom:20px;color:#fff;text-align:center;">
+    <div style="font-family:var(--font-head);font-size:1.05em;font-weight:700;letter-spacing:0.04em;margin-bottom:8px;">
+      🎀 作るのは得意。<br>売るのは AI にまかせよう。
+    </div>
+    <div style="font-size:0.80em;opacity:0.92;line-height:1.8;">
+      あなたの作品には、ちゃんと価値がある。<br>
+      でも「どう伝えるか」で売れる作品は決まる。<br>
+      このアプリが、あなたの言葉を<br>
+      「買いたい」に変えるお手伝いをします。
+    </div>
+  </div>
+
   <div class="usage-section">
-    <div class="usage-stitle">🎯 このアプリでできること</div>
+    <div class="usage-stitle">✨ このアプリでできること</div>
     <ul class="usage-list">
-      <li>Instagramプロフィールをプロ仕様に整える</li>
-      <li>投稿キャプション＋ハッシュタグを一発生成</li>
-      <li>X・Threadsの集客投稿を自動作成</li>
-      <li>すべての文章にBASEへの誘導を自然に組み込む</li>
-      <li>スマホ撮影のコツで写真力アップ</li>
+      <li>📌 Instagramプロフィールをプロ仕様に整える</li>
+      <li>📌 アカウント名を強い・魅力的・わかりやすい3案で提案</li>
+      <li>📌 投稿キャプション＋ハッシュタグ7個を一発生成</li>
+      <li>📌 X・Threadsの集客投稿を自動作成</li>
+      <li>📌 全文にBASEへの購入誘導を自然に組み込む</li>
+      <li>📌 スマホ撮影のコツで写真力アップ</li>
     </ul>
   </div>
+
   <div class="usage-section">
-    <div class="usage-stitle">📝 使い方 ステップ</div>
+    <div class="usage-stitle">🚀 使い方 5ステップ</div>
     <ol class="usage-steps">
-      <li>⚙️ 設定ボタンを押してブランド名・各SNSアカウント・BASEのURLを入力する</li>
-      <li>タブ①でInstagramのプロフィール文を整える</li>
-      <li>タブ②で作品のキャプションを生成してコピーする</li>
+      <li>⚙️ 設定ボタンでブランド名・各SNSアカウント・BASEのURLを入力する</li>
+      <li>タブ①でInstagramのプロフィール＆アカウント名を整える</li>
+      <li>タブ②で作品の投稿キャプションを生成してコピーする</li>
       <li>タブ③でX・Threadsの集客投稿を作ってシェアする</li>
-      <li>下の「撮影の極意」を参考に写真のクオリティを上げる</li>
+      <li>撮影の極意を参考に、写真のクオリティを磨く</li>
     </ol>
   </div>
+
+  <div style="background:#FFF8E8;border:1.5px solid #F0D080;border-radius:12px;padding:14px 16px;margin-bottom:16px;font-size:0.83em;color:#7a5800;line-height:1.9;">
+    <strong>💡 はじめての方へ</strong><br>
+    まずは⚙️設定ボタンの<strong>「デモデータ」</strong>を押してみてください。<br>
+    サンプルデータが自動入力され、アプリの流れをすぐに体験できます。
+  </div>
+
   <div class="usage-section">
     <div class="usage-stitle">💰 ご利用プラン</div>
     <ul class="usage-list">
@@ -350,9 +471,6 @@ body { font-family:var(--font-main); background:#FBF7FA; color:#3a2030; min-heig
       <li>制限解除：パスワード入力で無制限に</li>
       <li>パスワードはご購入後にメールでお届けします</li>
     </ul>
-  </div>
-  <div class="info-box">
-    💡 設定を充実させるほど<br>生成される文章の精度が上がります！<br>まずは設定を埋めるところから始めてください。
   </div>
 </div>
 
@@ -605,6 +723,45 @@ async function callAI(prompt){
   return d.content[0].text;
 }
 function parseJSON(r){return JSON.parse(r.replace(/```json|```/g,'').trim());}
+
+// ── デモデータ ──
+const DEMO = {
+  brandName : 'てしごとAkko',
+  igAcc     : '@handmade_akko',
+  xAcc      : '@handmade_akko',
+  thAcc     : '@handmade_akko',
+  baseUrl   : 'https://akko-handmade.base.shop'
+};
+
+function showDemoMsg(msg, isError=false){
+  const el = document.getElementById('demoMsg');
+  el.textContent = msg;
+  el.className = 'demo-msg' + (isError ? ' error' : '');
+  el.style.display = 'block';
+  setTimeout(() => { el.style.display = 'none'; }, 2800);
+}
+
+function loadDemo(){
+  Object.entries(DEMO).forEach(([id, val]) => {
+    const el = document.getElementById(id);
+    if(el){ el.value = val; }
+  });
+  // ジャンルもアクセサリーにリセット
+  document.querySelectorAll('.genre-btn').forEach(b => b.classList.remove('on'));
+  document.querySelector('.genre-btn').classList.add('on');
+  genre = 'アクセサリー・ピアス';
+  saveSettings();
+  showDemoMsg('✅ デモデータを入力しました！タブ①から試してみてください。');
+}
+
+function clearDemo(){
+  FIELDS.forEach(id => {
+    const el = document.getElementById(id);
+    if(el){ el.value = ''; }
+    localStorage.removeItem('hmm_' + id);
+  });
+  showDemoMsg('🗑️ 入力内容をクリアしました。');
+}
 
 async function genProfile(){
   if(!canGen())return;
