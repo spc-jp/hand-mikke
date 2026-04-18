@@ -291,6 +291,164 @@ body { font-family:var(--font-main); background:#FBF7FA; color:#3a2030; min-heig
 .footer { text-align:center; padding:20px; font-size:0.78em; color:#b09aaa; border-top:1px solid #F0E4EA; margin-top:10px; }
 
 /* ════════════════════════
+   ハンドメイドアニメーション
+════════════════════════ */
+.hm-loading {
+  display:none;
+  text-align:center;
+  padding:32px 16px;
+}
+.hm-stage {
+  position:relative;
+  width:100px; height:100px;
+  margin:0 auto 16px;
+}
+/* 糸玉 */
+.hm-yarn {
+  position:absolute;
+  top:50%; left:50%;
+  transform:translate(-50%,-50%);
+  font-size:3em;
+  animation: yarnSpin 1.6s ease-in-out infinite;
+}
+@keyframes yarnSpin {
+  0%   { transform:translate(-50%,-50%) rotate(0deg) scale(1); }
+  25%  { transform:translate(-50%,-50%) rotate(15deg) scale(1.08); }
+  50%  { transform:translate(-50%,-50%) rotate(0deg) scale(1); }
+  75%  { transform:translate(-50%,-50%) rotate(-15deg) scale(1.08); }
+  100% { transform:translate(-50%,-50%) rotate(0deg) scale(1); }
+}
+/* 針 */
+.hm-needle {
+  position:absolute;
+  top:8px; left:50%;
+  transform:translateX(-50%);
+  font-size:1.4em;
+  animation: needleDip 1.6s ease-in-out infinite;
+  transform-origin: bottom center;
+}
+@keyframes needleDip {
+  0%,100% { transform:translateX(-50%) rotate(-30deg) translateY(0px); opacity:1; }
+  30%     { transform:translateX(-50%) rotate(-30deg) translateY(14px); opacity:1; }
+  50%     { transform:translateX(-50%) rotate(-30deg) translateY(14px); opacity:0.4; }
+  70%     { transform:translateX(-50%) rotate(-30deg) translateY(0px); opacity:1; }
+}
+/* キラキラ */
+.hm-spark {
+  position:absolute;
+  font-size:0.9em;
+  animation: sparkle 1.6s ease-in-out infinite;
+}
+.hm-spark:nth-child(3){ top:4px;  right:10px; animation-delay:0s;    }
+.hm-spark:nth-child(4){ top:50%; left:4px;  animation-delay:0.4s;  }
+.hm-spark:nth-child(5){ bottom:8px; right:8px; animation-delay:0.8s;  }
+.hm-spark:nth-child(6){ bottom:4px; left:14px;  animation-delay:1.2s; }
+@keyframes sparkle {
+  0%,100%{ opacity:0; transform:scale(0.5); }
+  50%    { opacity:1; transform:scale(1.2); }
+}
+.hm-text {
+  font-family:var(--font-head);
+  font-size:0.9em;
+  color:var(--p);
+  letter-spacing:0.05em;
+  animation: textPulse 1.6s ease-in-out infinite;
+}
+.hm-dots::after {
+  content:'';
+  animation: dots 1.6s steps(4,end) infinite;
+}
+@keyframes dots {
+  0%  { content:''; }
+  25% { content:'.'; }
+  50% { content:'..'; }
+  75% { content:'...'; }
+}
+@keyframes textPulse {
+  0%,100%{ opacity:0.7; }
+  50%    { opacity:1; }
+}
+
+/* ════════════════════════
+   ステップフロー（ヘッダー）
+════════════════════════ */
+.step-flow {
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:4px;
+  padding:8px 12px 0;
+  position:relative;
+  z-index:2;
+  flex-wrap:nowrap;
+}
+.step-item {
+  display:flex;
+  align-items:center;
+  gap:4px;
+  padding:4px 10px;
+  border-radius:20px;
+  font-size:0.72em;
+  font-weight:700;
+  color:rgba(255,255,255,0.55);
+  background:rgba(255,255,255,0.10);
+  border:1.5px solid transparent;
+  transition:all 0.3s;
+  white-space:nowrap;
+  cursor:pointer;
+}
+.step-item.current {
+  color:#fff;
+  background:rgba(255,255,255,0.22);
+  border-color:rgba(255,255,255,0.6);
+  box-shadow:0 2px 8px rgba(0,0,0,0.12);
+}
+.step-item.done {
+  color:rgba(255,255,255,0.75);
+  background:rgba(255,255,255,0.12);
+}
+.step-arrow {
+  color:rgba(255,255,255,0.45);
+  font-size:0.8em;
+  flex-shrink:0;
+}
+.step-next-hint {
+  text-align:center;
+  font-size:0.72em;
+  color:rgba(255,255,255,0.80);
+  padding:4px 0 0;
+  position:relative;
+  z-index:2;
+  letter-spacing:0.02em;
+  min-height:18px;
+}
+
+/* ════════════════════════
+   まとめてコピーボタン
+════════════════════════ */
+.copy-all-btn {
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:8px;
+  width:100%;
+  margin-top:18px;
+  padding:13px;
+  background:var(--p-light);
+  color:var(--p);
+  border:2px solid var(--p);
+  border-radius:14px;
+  font-family:var(--font-head);
+  font-size:0.95em;
+  font-weight:700;
+  cursor:pointer;
+  transition:all 0.2s;
+  letter-spacing:0.04em;
+}
+.copy-all-btn:hover { background:var(--p); color:#fff; }
+.copy-all-btn.copied { background:#4CAF50; border-color:#4CAF50; color:#fff; }
+
+/* ════════════════════════
    スマホ対応 ( ~480px )
 ════════════════════════ */
 @media (max-width: 480px) {
@@ -494,10 +652,19 @@ body { font-family:var(--font-main); background:#FBF7FA; color:#3a2030; min-heig
       </button>
     </div>
   </div>
+  <!-- ステップフロー -->
+  <div class="step-flow" id="stepFlow">
+    <div class="step-item current" onclick="switchTab(0)" id="step0">① プロフィール</div>
+    <div class="step-arrow">→</div>
+    <div class="step-item" onclick="switchTab(1)" id="step1">② 投稿文</div>
+    <div class="step-arrow">→</div>
+    <div class="step-item" onclick="switchTab(2)" id="step2">③ 集客投稿</div>
+  </div>
+  <div class="step-next-hint" id="stepHint">まず①でプロフィールを作りましょう ✨</div>
   <div class="tab-nav">
-    <button class="tab-nav-btn on" onclick="switchTab(0)">① Instagramプロフィール</button>
-    <button class="tab-nav-btn"    onclick="switchTab(1)">② Instagram投稿文</button>
-    <button class="tab-nav-btn"    onclick="switchTab(2)">③ X / Threads集客</button>
+    <button class="tab-nav-btn on" onclick="switchTab(0)">① プロフィール</button>
+    <button class="tab-nav-btn"    onclick="switchTab(1)">② 投稿文</button>
+    <button class="tab-nav-btn"    onclick="switchTab(2)">③ X / Threads</button>
   </div>
 </div>
 
@@ -523,7 +690,17 @@ body { font-family:var(--font-main); background:#FBF7FA; color:#3a2030; min-heig
       <textarea class="f-textarea" id="p_works" rows="2" placeholder="例：天然石を使ったピアス、シルバーアクセサリー"></textarea>
     </div>
     <button class="gen-btn" onclick="genProfile()">✨ プロフィールを生成する</button>
-    <div class="loading" id="load0"><div class="spin"></div><br>AIが生成しています…少々お待ちください</div>
+    <div class="hm-loading" id="load0">
+      <div class="hm-stage">
+        <div class="hm-needle">🪡</div>
+        <div class="hm-yarn">🧶</div>
+        <div class="hm-spark">✨</div>
+        <div class="hm-spark">✨</div>
+        <div class="hm-spark">✨</div>
+        <div class="hm-spark">✨</div>
+      </div>
+      <div class="hm-text">AIが編んでいます<span class="hm-dots"></span></div>
+    </div>
     <div id="out0" style="display:none;">
       <hr class="out-divider">
       <div class="out-section">
@@ -547,6 +724,9 @@ body { font-family:var(--font-main); background:#FBF7FA; color:#3a2030; min-heig
         <div class="out-box" id="o_link"></div>
         <button class="copy-btn" onclick="copyEl('o_link',this)">📋 コピーする</button>
       </div>
+      <button class="copy-all-btn" onclick="copyAll(['o_acct','o_prof','o_hl','o_link'], this)">
+        📋 ①プロフィール全部まとめてコピー
+      </button>
     </div>
   </div>
 
@@ -573,7 +753,17 @@ body { font-family:var(--font-main); background:#FBF7FA; color:#3a2030; min-heig
       <input type="text" class="f-input" id="po_price" placeholder="例：3,800円（税込）">
     </div>
     <button class="gen-btn" onclick="genPost()">✨ 投稿文を生成する</button>
-    <div class="loading" id="load1"><div class="spin"></div><br>AIが生成しています…少々お待ちください</div>
+    <div class="hm-loading" id="load1">
+      <div class="hm-stage">
+        <div class="hm-needle">✂️</div>
+        <div class="hm-yarn">🎀</div>
+        <div class="hm-spark">✨</div>
+        <div class="hm-spark">✨</div>
+        <div class="hm-spark">✨</div>
+        <div class="hm-spark">✨</div>
+      </div>
+      <div class="hm-text">投稿文を仕上げています<span class="hm-dots"></span></div>
+    </div>
     <div id="out1" style="display:none;">
       <hr class="out-divider">
       <div class="out-section">
@@ -586,6 +776,9 @@ body { font-family:var(--font-main); background:#FBF7FA; color:#3a2030; min-heig
         <div class="out-box" id="o_str"></div>
         <button class="copy-btn" onclick="copyEl('o_str',this)">📋 コピーする</button>
       </div>
+      <button class="copy-all-btn" onclick="copyAll(['o_cap','o_str'], this)">
+        📋 ②投稿文全部まとめてコピー
+      </button>
     </div>
   </div>
 
@@ -604,7 +797,17 @@ body { font-family:var(--font-main); background:#FBF7FA; color:#3a2030; min-heig
       <input type="text" class="f-input" id="sn_igurl" placeholder="例：https://www.instagram.com/p/XXXXXXX">
     </div>
     <button class="gen-btn" onclick="genSNS()">✨ 集客投稿を生成する</button>
-    <div class="loading" id="load2"><div class="spin"></div><br>AIが生成しています…少々お待ちください</div>
+    <div class="hm-loading" id="load2">
+      <div class="hm-stage">
+        <div class="hm-needle">📣</div>
+        <div class="hm-yarn">💌</div>
+        <div class="hm-spark">✨</div>
+        <div class="hm-spark">✨</div>
+        <div class="hm-spark">✨</div>
+        <div class="hm-spark">✨</div>
+      </div>
+      <div class="hm-text">集客投稿を作っています<span class="hm-dots"></span></div>
+    </div>
     <div id="out2" style="display:none;">
       <hr class="out-divider">
       <div class="out-section">
@@ -617,6 +820,9 @@ body { font-family:var(--font-main); background:#FBF7FA; color:#3a2030; min-heig
         <div class="out-box" id="o_th"></div>
         <button class="copy-btn" onclick="copyEl('o_th',this)">📋 コピーする</button>
       </div>
+      <button class="copy-all-btn" onclick="copyAll(['o_x','o_th'], this)">
+        📋 ③集客投稿全部まとめてコピー
+      </button>
     </div>
   </div>
 
@@ -667,9 +873,38 @@ function setTheme(n){
 let genre='アクセサリー・ピアス';
 function pickGenre(btn,g){ document.querySelectorAll('.genre-btn').forEach(b=>b.classList.remove('on')); btn.classList.add('on'); genre=g; }
 
+const STEP_HINTS = [
+  'まず①でInstagramプロフィールを整えましょう ✨',
+  '次は②で作品の投稿キャプションを作りましょう 📸',
+  '最後は③でX・Threadsに拡散して集客完了！ 🚀'
+];
+
 function switchTab(i){
   document.querySelectorAll('.tab-nav-btn').forEach((b,idx)=>b.classList.toggle('on',idx===i));
   document.querySelectorAll('.tab-pane').forEach((p,idx)=>p.classList.toggle('on',idx===i));
+  // ステップフロー更新
+  [0,1,2].forEach(idx=>{
+    const el = document.getElementById('step'+idx);
+    if(!el) return;
+    el.classList.remove('current','done');
+    if(idx === i) el.classList.add('current');
+    else if(idx < i) el.classList.add('done');
+  });
+  const hint = document.getElementById('stepHint');
+  if(hint) hint.textContent = STEP_HINTS[i];
+}
+
+function copyAll(ids, btn){
+  const text = ids.map(id=>{
+    const el = document.getElementById(id);
+    return el ? el.textContent.trim() : '';
+  }).filter(t=>t).join('\n\n─────────────\n\n');
+  navigator.clipboard.writeText(text).then(()=>{
+    const orig = btn.innerHTML;
+    btn.innerHTML = '✅ まとめてコピーしました！';
+    btn.classList.add('copied');
+    setTimeout(()=>{ btn.innerHTML=orig; btn.classList.remove('copied'); }, 2200);
+  });
 }
 
 function togglePanel(w){
@@ -725,66 +960,72 @@ async function callAI(prompt){
 function parseJSON(r){return JSON.parse(r.replace(/```json|```/g,'').trim());}
 
 // ── デモデータ ──
-const DEMO_SETTINGS = {
-  brandName : 'てしごとAkko',
-  igAcc     : '@te_shigoto_akko',
-  xAcc      : '@te_shigoto_akko',
-  thAcc     : '@te_shigoto_akko',
-  baseUrl   : 'https://akko-handmade.base.shop'
-};
-
-const DEMO_FORMS = {
-  // タブ①
-  p_appeal : '子育てが落ち着いた頃に出会ったアクセサリー作り。身につけるたびにちょっと気分が上がる、そんな毎日の小さな幸せを届けたくて制作しています。素材選びにこだわり、一点一点ていねいに仕上げています。',
-  p_works  : '天然石を使ったピアス・イヤリング、シルバーチェーンのネックレス',
-  // タブ②
-  po_name  : '天然石ラピスラズリ×シルバーチェーンのロングピアス',
-  po_detail: '素材：ラピスラズリ（天然石）・シルバー925チェーン　サイズ：全長約6cm　制作時間：約3時間',
-  po_story : '100個以上の石の中から、色と形と質感がいちばん美しいものだけを選びました。揺れるたびに光の角度が変わり、さりげなくでも存在感のあるデザインに仕上げています。普段使いにも、ちょっとしたお出かけにも合わせやすい一点です。',
-  po_price : '3,800円（税込）',
-  // タブ③
-  sn_point : '揺れるたびに表情が変わる、天然石ラピスラズリのロングピアス',
-  sn_igurl : 'https://www.instagram.com/te_shigoto_akko/'
-};
-
 function showDemoMsg(msg, isError=false){
   const el = document.getElementById('demoMsg');
+  if(!el) return;
   el.textContent = msg;
   el.className = 'demo-msg' + (isError ? ' error' : '');
   el.style.display = 'block';
-  setTimeout(() => { el.style.display = 'none'; }, 3000);
+  setTimeout(() => { el.style.display = 'none'; }, 3200);
+}
+
+function setVal(id, val){
+  const el = document.getElementById(id);
+  if(el) el.value = val;
 }
 
 function loadDemo(){
-  // 設定欄
-  Object.entries(DEMO_SETTINGS).forEach(([id, val]) => {
-    const el = document.getElementById(id);
-    if(el){ el.value = val; }
-  });
-  // タブ①②③の入力欄
-  Object.entries(DEMO_FORMS).forEach(([id, val]) => {
-    const el = document.getElementById(id);
-    if(el){ el.value = val; }
-  });
-  // ジャンルをアクセサリーに
+  // ── 設定欄 ──
+  setVal('brandName', 'てしごとAkko');
+  setVal('igAcc',     '@te_shigoto_akko');
+  setVal('xAcc',      '@te_shigoto_akko');
+  setVal('thAcc',     '@te_shigoto_akko');
+  setVal('baseUrl',   'https://akko-handmade.base.shop');
+
+  // ── タブ① プロフィール ──
+  setVal('p_appeal',
+    '子育てが落ち着いた頃に出会ったアクセサリー作り。' +
+    '身につけるたびにちょっと気分が上がる、そんな毎日の小さな幸せを届けたくて制作しています。' +
+    '素材選びにこだわり、一点一点ていねいに仕上げています。');
+  setVal('p_works',
+    '天然石を使ったピアス・イヤリング、シルバーチェーンのネックレス');
+
+  // ── タブ② 投稿文 ──
+  setVal('po_name',
+    '天然石ラピスラズリ×シルバーチェーンのロングピアス');
+  setVal('po_detail',
+    '素材：ラピスラズリ（天然石）・シルバー925チェーン　サイズ：全長約6cm　制作時間：約3時間');
+  setVal('po_story',
+    '100個以上の石の中から色と形と質感がいちばん美しいものだけを選びました。' +
+    '揺れるたびに光の角度が変わり、さりげなくでも存在感のあるデザインに仕上げています。' +
+    '普段使いにも、ちょっとしたお出かけにも合わせやすい一点です。');
+  setVal('po_price', '3,800円（税込）');
+
+  // ── タブ③ X/Threads ──
+  setVal('sn_point',
+    '揺れるたびに表情が変わる、天然石ラピスラズリのロングピアス');
+  setVal('sn_igurl',
+    'https://www.instagram.com/te_shigoto_akko/');
+
+  // ── ジャンルをアクセサリーに ──
   document.querySelectorAll('.genre-btn').forEach(b => b.classList.remove('on'));
-  document.querySelector('.genre-btn').classList.add('on');
+  const firstGenre = document.querySelector('.genre-btn');
+  if(firstGenre) firstGenre.classList.add('on');
   genre = 'アクセサリー・ピアス';
+
   saveSettings();
-  showDemoMsg('✅ デモデータを入力しました！タブ①から「生成する」を押してみてください🎀');
+  showDemoMsg('✅ デモデータを入力しました！パネルを閉じてタブ①から「生成する」を押してみてください🎀');
 }
 
 function clearDemo(){
   // 設定欄クリア
-  FIELDS.forEach(id => {
-    const el = document.getElementById(id);
-    if(el){ el.value = ''; }
+  ['brandName','igAcc','xAcc','thAcc','baseUrl'].forEach(id => {
+    setVal(id, '');
     localStorage.removeItem('hmm_' + id);
   });
   // タブ入力欄クリア
-  Object.keys(DEMO_FORMS).forEach(id => {
-    const el = document.getElementById(id);
-    if(el){ el.value = ''; }
+  ['p_appeal','p_works','po_name','po_detail','po_story','po_price','sn_point','sn_igurl'].forEach(id => {
+    setVal(id, '');
   });
   showDemoMsg('🗑️ すべての入力内容をクリアしました。');
 }
@@ -867,8 +1108,16 @@ function copyEl(id,btn){
   });
 }
 
-function show(id){document.getElementById(id).style.display='block';}
-function hide(id){document.getElementById(id).style.display='none';}
+function show(id){
+  const el=document.getElementById(id);
+  if(!el) return;
+  // hm-loading は flex で表示
+  el.style.display = el.classList.contains('hm-loading') ? 'block' : 'block';
+}
+function hide(id){
+  const el=document.getElementById(id);
+  if(el) el.style.display='none';
+}
 
 const FIELDS=['brandName','igAcc','xAcc','thAcc','baseUrl'];
 function saveSettings(){FIELDS.forEach(id=>localStorage.setItem('hmm_'+id,document.getElementById(id).value));}
