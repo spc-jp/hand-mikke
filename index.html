@@ -20,14 +20,17 @@
   --font-head: 'Zen Maru Gothic', sans-serif;
 }
 * { box-sizing:border-box; margin:0; padding:0; }
-body { font-family:var(--font-main); background:#FBF7FA; color:#3a2030; min-height:100vh; font-size:14px; line-height:1.7; }
+body { font-family:var(--font-main); background:#FBF7FA; color:#3a2030; min-height:100vh; font-size:14px; line-height:1.7; padding-top:116px; }
 
-/* ── HEADER ── */
+/* ── HEADER（固定） ── */
 .app-header {
   background: var(--ig-grad);
-  padding: 18px 16px 0;
-  position: relative;
+  padding: 0 16px;
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  z-index: 600;
   overflow: hidden;
+  box-shadow: 0 2px 16px rgba(0,0,0,0.18);
 }
 .app-header::before {
   content:''; position:absolute; top:-50px; right:-50px;
@@ -40,37 +43,44 @@ body { font-family:var(--font-main); background:#FBF7FA; color:#3a2030; min-heig
   background:rgba(255,255,255,0.05); pointer-events:none;
 }
 
+/* タイトル左 ／ ボタン群右 */
 .header-top {
   display:flex; align-items:center; justify-content:space-between;
-  position:relative; z-index:2; max-width:900px; margin:0 auto;
+  position:relative; z-index:2; max-width:960px; margin:0 auto;
+  padding: 14px 0 0;
 }
+
+.header-left { display:flex; flex-direction:column; justify-content:center; }
+.header-title { font-family:var(--font-head); font-size:1.45em; color:#fff; letter-spacing:0.05em; text-shadow:0 2px 8px rgba(0,0,0,0.2); }
+.header-sub { font-size:0.74em; color:rgba(255,255,255,0.85); margin-top:1px; }
+
+/* ボタン2つ右横並び */
+.hdr-btns { display:flex; gap:8px; align-items:center; }
 
 .hdr-btn {
   display:flex; flex-direction:column; align-items:center; gap:3px;
   background:rgba(255,255,255,0.18); border:1.5px solid rgba(255,255,255,0.4);
   border-radius:14px; padding:8px 14px; color:#fff;
   font-family:var(--font-main); font-size:0.72em; font-weight:700;
-  cursor:pointer; transition:all 0.2s; min-width:76px; letter-spacing:0.02em;
+  cursor:pointer; transition:all 0.2s; min-width:72px; letter-spacing:0.02em;
 }
 .hdr-btn:hover { background:rgba(255,255,255,0.28); transform:translateY(-1px); }
 .hdr-btn.active { background:rgba(255,255,255,0.36); border-color:rgba(255,255,255,0.85); box-shadow:0 2px 12px rgba(0,0,0,0.15); }
-.hdr-btn-icon { font-size:1.45em; line-height:1; }
+.hdr-btn-icon { font-size:1.4em; line-height:1; }
 
-.header-center { flex:1; text-align:center; }
-.header-title { font-family:var(--font-head); font-size:1.6em; color:#fff; letter-spacing:0.06em; text-shadow:0 2px 8px rgba(0,0,0,0.2); }
-.header-sub { font-size:0.78em; color:rgba(255,255,255,0.88); margin-top:2px; }
-
+/* テーマドット（設定パネル内に移動） */
 .theme-row {
-  display:flex; justify-content:center; gap:10px;
-  padding:12px 0 0; position:relative; z-index:2;
+  display:flex; gap:10px; align-items:center;
+  margin-bottom:16px;
 }
 .theme-dot {
-  width:28px; height:28px; border-radius:50%;
-  border:2.5px solid rgba(255,255,255,0.52); cursor:pointer;
-  transition:transform 0.18s,border-color 0.18s;
+  width:30px; height:30px; border-radius:50%;
+  border:2.5px solid #e0c8d8; cursor:pointer;
+  transition:transform 0.18s, border-color 0.18s;
+  flex-shrink:0;
 }
 .theme-dot:hover { transform:scale(1.18); }
-.theme-dot.on { border-color:#fff; transform:scale(1.25); box-shadow:0 0 0 2px rgba(0,0,0,0.18); }
+.theme-dot.on { border-color:var(--p); transform:scale(1.22); box-shadow:0 0 0 3px var(--p-accent); }
 .theme-dot.t-ig     { background:linear-gradient(135deg,#833AB4,#E1306C,#F77737); }
 .theme-dot.t-pink   { background:linear-gradient(135deg,#E8608A,#C04070); }
 .theme-dot.t-blue   { background:linear-gradient(135deg,#4A90D9,#2260B0); }
@@ -79,7 +89,7 @@ body { font-family:var(--font-main); background:#FBF7FA; color:#3a2030; min-heig
 
 .tab-nav { display:flex; background:rgba(0,0,0,0.18); margin-top:14px; }
 .tab-nav-btn {
-  flex:1; padding:11px 4px; border:none; background:transparent;
+  flex:1; padding:10px 4px; border:none; background:transparent;
   color:rgba(255,255,255,0.72); font-family:var(--font-main);
   font-size:0.78em; font-weight:700; cursor:pointer;
   border-bottom:3px solid transparent; transition:all 0.2s;
@@ -277,6 +287,14 @@ body { font-family:var(--font-main); background:#FBF7FA; color:#3a2030; min-heig
     <div class="sp-title">⚙️ あなたの設定</div>
     <button class="sp-close" onclick="closePanels()">✕</button>
   </div>
+  <div class="s-label" style="margin-top:14px; margin-bottom:8px;">🎨 配色テーマ</div>
+  <div class="theme-row" style="margin-bottom:20px;">
+    <button class="theme-dot t-ig on"  onclick="setTheme('ig')"     title="Instagram"></button>
+    <button class="theme-dot t-pink"   onclick="setTheme('pink')"   title="ピンク"></button>
+    <button class="theme-dot t-blue"   onclick="setTheme('blue')"   title="ブルー"></button>
+    <button class="theme-dot t-green"  onclick="setTheme('green')"  title="グリーン"></button>
+    <button class="theme-dot t-yellow" onclick="setTheme('yellow')" title="イエロー"></button>
+  </div>
   <label class="s-label">作家名 / ブランド名</label>
   <input type="text" class="s-input" id="brandName" placeholder="例：てしごとAkko">
   <label class="s-label">📷 Instagramアカウント</label>
@@ -338,28 +356,25 @@ body { font-family:var(--font-main); background:#FBF7FA; color:#3a2030; min-heig
   </div>
 </div>
 
-<!-- ═══ HEADER ═══ -->
+<!-- ═══ HEADER（固定） ═══ -->
 <div class="app-header">
   <div class="header-top">
-    <button class="hdr-btn" id="settingBtn" onclick="togglePanel('setting')">
-      <span class="hdr-btn-icon">⚙️</span>
-      <span>あなたの設定</span>
-    </button>
-    <div class="header-center">
+    <!-- 左：タイトル -->
+    <div class="header-left">
       <div class="header-title">🎀 ハンドメイドみっけ</div>
       <div class="header-sub">Instagram × BASE × SNS で「作品を売る仕組み」を一発生成</div>
     </div>
-    <button class="hdr-btn" id="usageBtn" onclick="togglePanel('usage')">
-      <span class="hdr-btn-icon">📖</span>
-      <span>使い方</span>
-    </button>
-  </div>
-  <div class="theme-row">
-    <button class="theme-dot t-ig on"   onclick="setTheme('ig')"     title="Instagram"></button>
-    <button class="theme-dot t-pink"    onclick="setTheme('pink')"   title="ピンク"></button>
-    <button class="theme-dot t-blue"    onclick="setTheme('blue')"   title="ブルー"></button>
-    <button class="theme-dot t-green"   onclick="setTheme('green')"  title="グリーン"></button>
-    <button class="theme-dot t-yellow"  onclick="setTheme('yellow')" title="イエロー"></button>
+    <!-- 右：ボタン横並び -->
+    <div class="hdr-btns">
+      <button class="hdr-btn" id="usageBtn" onclick="togglePanel('usage')">
+        <span class="hdr-btn-icon">📖</span>
+        <span>使い方</span>
+      </button>
+      <button class="hdr-btn" id="settingBtn" onclick="togglePanel('setting')">
+        <span class="hdr-btn-icon">⚙️</span>
+        <span>設定</span>
+      </button>
+    </div>
   </div>
   <div class="tab-nav">
     <button class="tab-nav-btn on" onclick="switchTab(0)">① Instagramプロフィール</button>
@@ -393,6 +408,12 @@ body { font-family:var(--font-main); background:#FBF7FA; color:#3a2030; min-heig
     <div class="loading" id="load0"><div class="spin"></div><br>AIが生成しています…少々お待ちください</div>
     <div id="out0" style="display:none;">
       <hr class="out-divider">
+      <div class="out-section">
+        <div class="out-label">💡 Instagramアカウント名の提案（3案）</div>
+        <div style="font-size:0.78em;color:#9a6080;margin-bottom:6px;">✨ 強い・魅力的・わかりやすい、の3パターンでご提案します</div>
+        <div class="out-box" id="o_acct"></div>
+        <button class="copy-btn" onclick="copyEl('o_acct',this)">📋 コピーする</button>
+      </div>
       <div class="out-section">
         <div class="out-label">📝 Instagramプロフィール文（コピペ用）</div>
         <div class="out-box" id="o_prof"></div>
@@ -590,27 +611,59 @@ async function genProfile(){
   const s=cfg(),appeal=document.getElementById('p_appeal').value,works=document.getElementById('p_works').value;
   if(!appeal){alert('想い・こだわりを入力してください');return;}
   show('load0');hide('out0');
-  const p=`あなたはハンドメイド作家のInstagramブランディング専門家です。以下の情報でInstagramプロフィール文セットを作成してください。
-作家名：${s.name} ジャンル：${s.genre} 想い・こだわり：${appeal} 得意な作品：${works} BASEショップURL：${s.base}
-以下のJSONのみ返答（前後にテキスト不要）：{"profile":"140字以内のInstagramプロフィール文。温かみがあり購買意欲を高める。BASEへの誘導を自然に含める。絵文字適度に使う。","highlights":"ハイライト見出し案5つを改行区切りで。絵文字付き。","linkText":"ストーリーズでBASEリンクをプロフィールに誘導する文章。2〜3行。絵文字あり。温かみある文体。"}`;
-  try{const j=parseJSON(await callAI(p));document.getElementById('o_prof').textContent=j.profile;document.getElementById('o_hl').textContent=j.highlights;document.getElementById('o_link').textContent=j.linkText;show('out0');addCnt();}
+  const p=`あなたはハンドメイド作家のInstagramブランディング専門家です。以下の情報でInstagramプロフィール文セットを作成してください。投稿者は女性ハンドメイド作家です。
+
+作家名：${s.name}
+ジャンル：${s.genre}
+想い・こだわり：${appeal}
+得意な作品：${works}
+BASEショップURL：${s.base}
+
+以下のJSONのみ返答（前後にテキスト不要）：
+{
+  "accountNames": "Instagramアカウント名の提案3案。\n【強い】@提案名：選ぶ理由一言\n【魅力的】@提案名：選ぶ理由一言\n【わかりやすい】@提案名：選ぶ理由一言\nの形式で。英字・数字・アンダーバーのみ使用。",
+  "profile": "140字以内のInstagramプロフィール文。女性らしい温かみある文体。購買意欲を自然に高める。BASEへの誘導を含める。絵文字を適度に使う。",
+  "highlights": "ハイライト見出し案5つを改行区切りで。絵文字付き。",
+  "linkText": "ストーリーズでBASEリンクをプロフィールに誘導する文章。2〜3行。絵文字あり。女性らしい温かみある文体。"
+}`;
+  try{
+    const j=parseJSON(await callAI(p));
+    document.getElementById('o_acct').textContent=j.accountNames;
+    document.getElementById('o_prof').textContent=j.profile;
+    document.getElementById('o_hl').textContent=j.highlights;
+    document.getElementById('o_link').textContent=j.linkText;
+    show('out0');addCnt();
+  }
   catch(e){alert('生成に失敗しました。もう一度お試しください。\n'+e.message);}
   finally{hide('load0');}
 }
-
 async function genPost(){
   if(!canGen())return;
   const s=cfg(),name=document.getElementById('po_name').value,detail=document.getElementById('po_detail').value,story=document.getElementById('po_story').value,price=document.getElementById('po_price').value;
   if(!name){alert('作品名を入力してください');return;}
   show('load1');hide('out1');
-  const p=`あなたはハンドメイド作家のInstagram投稿専門ライターです。以下の情報で売れるInstagramキャプションを作成してください。
-作家名：${s.name} ジャンル：${s.genre} 作品名：${name} 素材・サイズ・制作時間：${detail} こだわり・制作秘話：${story} 価格：${price||'価格はDMまたはBASEショップにて'} BASEショップURL：${s.base} Instagramアカウント：${s.ig}
-以下のJSONのみ返答：{"caption":"Instagram投稿キャプション全文。①作品の魅力・情景描写②こだわり・制作秘話③BASEへの購入誘導④ハッシュタグ25〜30個。絵文字を自然に使う。","storyText":"ストーリーズ用の購買を促す短いテキスト。2行以内。絵文字あり。プロフィールのリンクから購入できますという誘導を含める。"}`;
+  const p=`あなたは女性ハンドメイド作家を専門に支援するInstagramライターです。見た人が思わず「欲しい」「買いたい」と感じる投稿キャプションを作成してください。
+
+作家名：${s.name}
+ジャンル：${s.genre}
+作品名：${name}
+素材・サイズ・制作時間：${detail}
+こだわり・制作秘話：${story}
+価格：${price||'価格はDMまたはBASEショップにて'}
+BASEショップURL：${s.base}
+Instagramアカウント：${s.ig}
+
+文章の方向性：女性らしい温かく親しみやすい文体。作品を持ったときの気持ち・シーン・感動を想像させる。絵文字を段落ごとに1〜2個自然に散りばめる。最後に購入を自然に背中を押す一文。
+
+以下のJSONのみ返答：
+{
+  "caption": "Instagram投稿キャプション全文。【構成】①作品を手にしたときのシーン・気持ちの描写（2〜3行、絵文字あり）②こだわりポイント・制作秘話（2〜3行、絵文字あり）③この作品が似合う人・シーンの提案（1〜2行）④購入への背中を押す一文＋BASEへの誘導（1〜2行）⑤改行してハッシュタグ7個をスペース区切り横並びで（ジャンル・素材・雰囲気・購買層を混ぜる）",
+  "storyText": "ストーリーズ用テキスト。2行以内。絵文字あり。作品の魅力を一言で伝え、プロフィールのリンクから購入できますという誘導を入れる。女性らしいやわらかな文体。"
+}`;
   try{const j=parseJSON(await callAI(p));document.getElementById('o_cap').textContent=j.caption;document.getElementById('o_str').textContent=j.storyText;show('out1');addCnt();}
   catch(e){alert('生成に失敗しました。もう一度お試しください。\n'+e.message);}
   finally{hide('load1');}
 }
-
 async function genSNS(){
   if(!canGen())return;
   const s=cfg(),point=document.getElementById('sn_point').value,igurl=document.getElementById('sn_igurl').value;
