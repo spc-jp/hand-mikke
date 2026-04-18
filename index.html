@@ -140,6 +140,8 @@ body { font-family:var(--font-main); background:#FBF7FA; color:#3a2030; min-heig
 }
 .genre-btn.on { background:var(--p); border-color:var(--p); color:#fff; }
 .save-note { font-size:0.74em; color:#b09aaa; margin-top:10px; line-height:1.7; }
+.genre-btn-other { border-style:dashed; }
+.genre-btn-other.on { background:var(--p-dark); border-color:var(--p-dark); color:#fff; border-style:solid; }
 .demo-bar {
   display:flex; gap:8px; margin-top:18px; padding-top:16px;
   border-top:2px dashed var(--p-accent);
@@ -731,6 +733,18 @@ body { font-family:var(--font-main); background:#FBF7FA; color:#3a2030; min-heig
     <button class="genre-btn"   onclick="pickGenre(this,'刺繍・刺し子')">🪡 刺繍</button>
     <button class="genre-btn"   onclick="pickGenre(this,'陶芸・一点物')">🏺 陶芸</button>
     <button class="genre-btn"   onclick="pickGenre(this,'キャンドル・ソープ')">🕯️ キャンドル</button>
+    <button class="genre-btn"   onclick="pickGenre(this,'カゴバッグ・かご細工')">🧺 カゴバッグ</button>
+    <button class="genre-btn"   onclick="pickGenre(this,'マクラメ・編み物')">🧶 マクラメ</button>
+    <button class="genre-btn"   onclick="pickGenre(this,'レザークラフト')">👝 レザー</button>
+    <button class="genre-btn"   onclick="pickGenre(this,'木工・ウッドクラフト')">🪵 木工</button>
+    <button class="genre-btn genre-btn-other" id="genreOtherBtn" onclick="pickGenreOther(this)">✏️ その他</button>
+  </div>
+  <div id="genreOtherWrap" style="display:none;margin-top:8px;">
+    <input type="text" class="s-input" id="genreOtherInput"
+      placeholder="例：カゴバッグ・マクラメ・ドライフラワーなど"
+      oninput="updateCustomGenre(this.value)"
+      style="margin-bottom:0;">
+    <div style="font-size:0.74em;color:#9a8090;margin-top:4px;">入力したジャンルがそのままAIに伝わります</div>
   </div>
   <div class="save-note">※ 設定は自動で保存されます。<br>一度入力すれば次回から自動入力されます。</div>
 
@@ -745,52 +759,132 @@ body { font-family:var(--font-main); background:#FBF7FA; color:#3a2030; min-heig
 <!-- 使い方パネル -->
 <div class="slide-panel" id="usagePanel">
   <div class="sp-header">
-    <div class="sp-title">📖 使い方とできること</div>
+    <div class="sp-title">📖 使い方ガイド</div>
     <button class="sp-close" onclick="closePanels()">✕</button>
   </div>
 
-  <!-- コンセプトメッセージ -->
+  <!-- コンセプト -->
   <div style="background:var(--p-grad);border-radius:14px;padding:18px 16px;margin-bottom:20px;color:#fff;text-align:center;">
     <div style="font-family:var(--font-head);font-size:1.05em;font-weight:700;letter-spacing:0.04em;margin-bottom:8px;">
       🎀 作るのは得意。<br>売るのは AI にまかせよう。
     </div>
-    <div style="font-size:0.80em;opacity:0.92;line-height:1.8;">
+    <div style="font-size:0.80em;opacity:0.92;line-height:1.9;">
       あなたの作品には、ちゃんと価値がある。<br>
       でも「どう伝えるか」で売れる作品は決まる。<br>
-      このアプリが、あなたの言葉を<br>
-      「買いたい」に変えるお手伝いをします。
+      このアプリが、あなたの言葉を<br>「買いたい」に変えるお手伝いをします。
     </div>
   </div>
 
+  <!-- はじめての方へ -->
+  <div style="background:#FFF8E8;border:1.5px solid #F0D080;border-radius:12px;padding:13px 15px;margin-bottom:18px;font-size:0.82em;color:#7a5800;line-height:1.9;">
+    💡 <strong>はじめての方へ</strong><br>
+    まず⚙️設定ボタンの <strong>「デモデータを入力」</strong> を押してください。<br>
+    サンプルが全タブに自動入力され、すぐに動きを体験できます！
+  </div>
+
+  <!-- STEP 0：設定 -->
   <div class="usage-section">
-    <div class="usage-stitle">✨ このアプリでできること</div>
-    <ul class="usage-list">
-      <li>📌 Instagramプロフィールをプロ仕様に整える</li>
-      <li>📌 アカウント名を強い・魅力的・わかりやすい3案で提案</li>
-      <li>📌 投稿キャプション＋ハッシュタグ7個を一発生成</li>
-      <li>📌 X・Threadsの集客投稿を自動作成</li>
-      <li>📌 全文にBASEへの購入誘導を自然に組み込む</li>
-      <li>📌 スマホ撮影のコツで写真力アップ</li>
+    <div class="usage-stitle" style="font-size:0.9em;padding:8px 12px;background:var(--p-light);border-radius:10px;border-left:4px solid var(--p);">
+      ⚙️ まず最初に「設定」を入力する
+    </div>
+    <ul class="usage-list" style="margin-top:10px;">
+      <li>作家名・ブランド名を入力する</li>
+      <li>Instagram・X・Threadsのアカウント名（@〜）を入力する</li>
+      <li>BASEのショップURLを入力する</li>
+      <li>作品のジャンルを選ぶ（なければ「その他」で自由入力）</li>
+      <li>配色テーマを好みの色に変える</li>
     </ul>
+    <div style="font-size:0.78em;color:#9a8090;margin-top:6px;padding-left:4px;">
+      ※ 設定は自動保存。一度入力すれば次回から自動で入ります。
+    </div>
   </div>
 
+  <!-- STEP 1 -->
   <div class="usage-section">
-    <div class="usage-stitle">🚀 使い方 5ステップ</div>
-    <ol class="usage-steps">
-      <li>⚙️ 設定ボタンでブランド名・各SNSアカウント・BASEのURLを入力する</li>
-      <li>タブ①でInstagramのプロフィール＆アカウント名を整える</li>
-      <li>タブ②で作品の投稿キャプションを生成してコピーする</li>
-      <li>タブ③でX・Threadsの集客投稿を作ってシェアする</li>
-      <li>撮影の極意を参考に、写真のクオリティを磨く</li>
-    </ol>
+    <div class="usage-stitle" style="font-size:0.9em;padding:8px 12px;background:#EBF4FF;border-radius:10px;border-left:4px solid #4A90D9;">
+      ① Instagramプロフィールを作る
+    </div>
+    <ul class="usage-list" style="margin-top:10px;">
+      <li>ハンドメイドへの<strong>想い・こだわり</strong>を自由に書く</li>
+      <li>得意な作品・代表作を入力する</li>
+      <li>「プロフィールを生成する」を押す</li>
+    </ul>
+    <div style="background:#F8F4FF;border-radius:10px;padding:10px 12px;margin-top:8px;font-size:0.8em;line-height:1.8;color:#5a4070;">
+      ✅ 生成されるもの：<br>
+      ・Instagramアカウント名の提案（強い・魅力的・わかりやすいの3案）<br>
+      ・プロフィール文（140字・BASEへの誘導入り）<br>
+      ・ハイライト見出し案5つ<br>
+      ・ストーリーズ用BASEへの誘導テキスト
+    </div>
   </div>
 
-  <div style="background:#FFF8E8;border:1.5px solid #F0D080;border-radius:12px;padding:14px 16px;margin-bottom:16px;font-size:0.83em;color:#7a5800;line-height:1.9;">
-    <strong>💡 はじめての方へ</strong><br>
-    まずは⚙️設定ボタンの<strong>「デモデータ」</strong>を押してみてください。<br>
-    サンプルデータが自動入力され、アプリの流れをすぐに体験できます。
+  <!-- STEP 2 -->
+  <div class="usage-section">
+    <div class="usage-stitle" style="font-size:0.9em;padding:8px 12px;background:#FFF0F5;border-radius:10px;border-left:4px solid #E8608A;">
+      ② Instagram 投稿文を作る
+    </div>
+    <ul class="usage-list" style="margin-top:10px;">
+      <li>作品名・素材・サイズ・制作時間を入力する</li>
+      <li>こだわりポイントや制作秘話を自由に書く</li>
+      <li>販売価格を入力する</li>
+      <li>「投稿文を生成する」を押す</li>
+    </ul>
+    <div style="background:#FFF0F5;border-radius:10px;padding:10px 12px;margin-top:8px;font-size:0.8em;line-height:1.8;color:#7a3050;">
+      ✅ 生成されるもの：<br>
+      ・購買につながるキャプション全文（絵文字入り・女性向け文体）<br>
+      ・ハッシュタグ7個（横並び・ジャンル別）<br>
+      ・ストーリーズ用の一言テキスト
+    </div>
   </div>
 
+  <!-- STEP 3 -->
+  <div class="usage-section">
+    <div class="usage-stitle" style="font-size:0.9em;padding:8px 12px;background:#EDFAF3;border-radius:10px;border-left:4px solid #48B87A;">
+      ③ X / Threads 集客投稿を作る
+    </div>
+    <ul class="usage-list" style="margin-top:10px;">
+      <li>作品のポイントを一言で入力する</li>
+      <li>Instagramの投稿URLがあれば入力する</li>
+      <li>「集客投稿を生成する」を押す</li>
+    </ul>
+    <div style="background:#EDFAF3;border-radius:10px;padding:10px 12px;margin-top:8px;font-size:0.8em;line-height:1.8;color:#2a6040;">
+      ✅ 生成されるもの：<br>
+      ・X（Twitter）用投稿文（140字・URL・ハッシュタグ入り）<br>
+      ・Threads用投稿文（温かみある長めの文章）<br>
+      ※ Instagramへ誘導してBASEで購入の流れを作ります
+    </div>
+  </div>
+
+  <!-- STEP 4 -->
+  <div class="usage-section">
+    <div class="usage-stitle" style="font-size:0.9em;padding:8px 12px;background:#FFF8E0;border-radius:10px;border-left:4px solid #F9A825;">
+      ④ 📅 投稿カレンダーで管理する
+    </div>
+    <ul class="usage-list" style="margin-top:10px;">
+      <li>カレンダーの日付をタップして投稿を登録する</li>
+      <li>②③で生成した投稿文を貼り付けて保存する</li>
+      <li>「Googleカレンダーに追加」でそのまま連携できる</li>
+      <li>登録した投稿は一覧で確認・編集・削除できる</li>
+    </ul>
+    <div style="background:#FFF8E0;border-radius:10px;padding:10px 12px;margin-top:8px;font-size:0.8em;line-height:1.8;color:#7a5000;">
+      ✅ できること：<br>
+      ・📷Instagram・🐦X・🧵Threadsの投稿をまとめて管理<br>
+      ・カレンダーにアイコンで投稿予定が一目でわかる<br>
+      ・Googleカレンダーとの連携（認証不要・ワンクリック）
+    </div>
+  </div>
+
+  <!-- 撮影のコツ -->
+  <div class="usage-section">
+    <div class="usage-stitle">📷 撮影の極意もチェック</div>
+    <div style="font-size:0.82em;color:#5a4050;line-height:1.8;">
+      画面下の「スマホ撮影の極意」を開くと、<br>
+      売れる写真を撮るための6か条が確認できます。<br>
+      文章と写真のどちらも磨いて、作品の魅力を最大限に届けましょう！
+    </div>
+  </div>
+
+  <!-- プラン -->
   <div class="usage-section">
     <div class="usage-stitle">💰 ご利用プラン</div>
     <ul class="usage-list">
@@ -1108,7 +1202,25 @@ function setTheme(n){
 }
 
 let genre='アクセサリー・ピアス';
-function pickGenre(btn,g){ document.querySelectorAll('.genre-btn').forEach(b=>b.classList.remove('on')); btn.classList.add('on'); genre=g; }
+function pickGenre(btn,g){
+  document.querySelectorAll('.genre-btn').forEach(b=>b.classList.remove('on'));
+  btn.classList.add('on');
+  genre=g;
+  // その他入力欄を閉じる
+  const wrap = document.getElementById('genreOtherWrap');
+  if(wrap) wrap.style.display='none';
+}
+function pickGenreOther(btn){
+  document.querySelectorAll('.genre-btn').forEach(b=>b.classList.remove('on'));
+  btn.classList.add('on');
+  const wrap = document.getElementById('genreOtherWrap');
+  if(wrap) wrap.style.display='block';
+  const inp = document.getElementById('genreOtherInput');
+  if(inp){ inp.focus(); genre = inp.value || 'その他ハンドメイド'; }
+}
+function updateCustomGenre(val){
+  genre = val || 'その他ハンドメイド';
+}
 
 const STEP_HINTS = [
   'まず①でInstagramプロフィールを整えましょう ✨',
