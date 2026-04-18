@@ -1,0 +1,651 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ハンドメイドみっけ｜Instagram×BASE 販売サポートアプリ</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@400;500;700&family=Noto+Sans+JP:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --p:      #C13584;
+  --p-light:#FDF0F8;
+  --p-dark: #833AB4;
+  --p-accent:#F5B8D8;
+  --p-grad: linear-gradient(135deg,#833AB4 0%,#C13584 40%,#E1306C 70%,#F77737 100%);
+  --ig-grad: linear-gradient(135deg,#833AB4 0%,#C13584 40%,#E1306C 70%,#F77737 100%);
+  --card-shadow: 0 4px 24px rgba(193,53,132,0.10);
+  --radius: 18px;
+  --font-main: 'Noto Sans JP', sans-serif;
+  --font-head: 'Zen Maru Gothic', sans-serif;
+}
+* { box-sizing:border-box; margin:0; padding:0; }
+body { font-family:var(--font-main); background:#FBF7FA; color:#3a2030; min-height:100vh; font-size:14px; line-height:1.7; }
+
+/* ── HEADER ── */
+.app-header {
+  background: var(--ig-grad);
+  padding: 18px 16px 0;
+  position: relative;
+  overflow: hidden;
+}
+.app-header::before {
+  content:''; position:absolute; top:-50px; right:-50px;
+  width:200px; height:200px; border-radius:50%;
+  background:rgba(255,255,255,0.07); pointer-events:none;
+}
+.app-header::after {
+  content:''; position:absolute; bottom:5px; left:-40px;
+  width:140px; height:140px; border-radius:50%;
+  background:rgba(255,255,255,0.05); pointer-events:none;
+}
+
+.header-top {
+  display:flex; align-items:center; justify-content:space-between;
+  position:relative; z-index:2; max-width:900px; margin:0 auto;
+}
+
+.hdr-btn {
+  display:flex; flex-direction:column; align-items:center; gap:3px;
+  background:rgba(255,255,255,0.18); border:1.5px solid rgba(255,255,255,0.4);
+  border-radius:14px; padding:8px 14px; color:#fff;
+  font-family:var(--font-main); font-size:0.72em; font-weight:700;
+  cursor:pointer; transition:all 0.2s; min-width:76px; letter-spacing:0.02em;
+}
+.hdr-btn:hover { background:rgba(255,255,255,0.28); transform:translateY(-1px); }
+.hdr-btn.active { background:rgba(255,255,255,0.36); border-color:rgba(255,255,255,0.85); box-shadow:0 2px 12px rgba(0,0,0,0.15); }
+.hdr-btn-icon { font-size:1.45em; line-height:1; }
+
+.header-center { flex:1; text-align:center; }
+.header-title { font-family:var(--font-head); font-size:1.6em; color:#fff; letter-spacing:0.06em; text-shadow:0 2px 8px rgba(0,0,0,0.2); }
+.header-sub { font-size:0.78em; color:rgba(255,255,255,0.88); margin-top:2px; }
+
+.theme-row {
+  display:flex; justify-content:center; gap:10px;
+  padding:12px 0 0; position:relative; z-index:2;
+}
+.theme-dot {
+  width:28px; height:28px; border-radius:50%;
+  border:2.5px solid rgba(255,255,255,0.52); cursor:pointer;
+  transition:transform 0.18s,border-color 0.18s;
+}
+.theme-dot:hover { transform:scale(1.18); }
+.theme-dot.on { border-color:#fff; transform:scale(1.25); box-shadow:0 0 0 2px rgba(0,0,0,0.18); }
+.theme-dot.t-ig     { background:linear-gradient(135deg,#833AB4,#E1306C,#F77737); }
+.theme-dot.t-pink   { background:linear-gradient(135deg,#E8608A,#C04070); }
+.theme-dot.t-blue   { background:linear-gradient(135deg,#4A90D9,#2260B0); }
+.theme-dot.t-green  { background:linear-gradient(135deg,#48B87A,#2E8A58); }
+.theme-dot.t-yellow { background:linear-gradient(135deg,#F9B234,#E08020); }
+
+.tab-nav { display:flex; background:rgba(0,0,0,0.18); margin-top:14px; }
+.tab-nav-btn {
+  flex:1; padding:11px 4px; border:none; background:transparent;
+  color:rgba(255,255,255,0.72); font-family:var(--font-main);
+  font-size:0.78em; font-weight:700; cursor:pointer;
+  border-bottom:3px solid transparent; transition:all 0.2s;
+}
+.tab-nav-btn.on { color:#fff; background:rgba(255,255,255,0.12); border-bottom-color:#fff; }
+
+/* ── SLIDE PANELS ── */
+.slide-panel {
+  position:fixed; top:0; right:-420px; width:380px; max-width:95vw;
+  height:100vh; background:#fff; box-shadow:-4px 0 30px rgba(0,0,0,0.18);
+  z-index:500; transition:right 0.32s cubic-bezier(0.4,0,0.2,1);
+  overflow-y:auto; padding:24px 22px 40px;
+}
+.slide-panel.open { right:0; }
+.panel-backdrop {
+  display:none; position:fixed; inset:0;
+  background:rgba(40,10,30,0.45); z-index:499; backdrop-filter:blur(2px);
+}
+.panel-backdrop.show { display:block; }
+
+.sp-header {
+  display:flex; justify-content:space-between; align-items:center;
+  margin-bottom:20px; padding-bottom:14px;
+  border-bottom:2px solid var(--p-light);
+}
+.sp-title { font-family:var(--font-head); font-size:1.05em; font-weight:700; color:var(--p); }
+.sp-close {
+  background:var(--p-light); border:none; border-radius:50%;
+  width:34px; height:34px; font-size:1.1em; cursor:pointer;
+  color:var(--p-dark); display:flex; align-items:center; justify-content:center;
+  transition:background 0.2s;
+}
+.sp-close:hover { background:var(--p-accent); }
+
+/* ── SETTINGS FORM ── */
+.s-label { font-size:0.78em; font-weight:700; color:#7a5070; margin-bottom:4px; display:block; }
+.s-input {
+  width:100%; padding:9px 12px; border:1.5px solid #e8d0e0;
+  border-radius:10px; font-family:var(--font-main); font-size:0.88em;
+  color:#3a2030; background:#FDF7FA; transition:border-color 0.2s; margin-bottom:12px;
+}
+.s-input:focus { outline:none; border-color:var(--p); background:#fff; }
+.genre-wrap { display:grid; grid-template-columns:1fr 1fr; gap:6px; margin-top:4px; }
+.genre-btn {
+  padding:7px 4px; border:1.5px solid #e8d0e0; border-radius:9px;
+  background:#FDF7FA; font-size:0.78em; font-family:var(--font-main);
+  cursor:pointer; text-align:center; transition:all 0.18s; color:#6a5060;
+}
+.genre-btn.on { background:var(--p); border-color:var(--p); color:#fff; }
+.save-note { font-size:0.74em; color:#b09aaa; margin-top:10px; line-height:1.7; }
+
+/* ── USAGE PANEL ── */
+.usage-section { margin-bottom:18px; }
+.usage-stitle { font-size:0.85em; font-weight:700; color:var(--p); margin-bottom:8px; }
+.usage-list { list-style:none; padding:0; }
+.usage-list li {
+  font-size:0.84em; color:#5a4050; margin-bottom:5px;
+  padding:3px 0 3px 10px; border-left:3px solid var(--p-accent);
+}
+.usage-steps { padding-left:18px; }
+.usage-steps li { font-size:0.84em; color:#5a4050; margin-bottom:6px; line-height:1.7; }
+.info-box {
+  background:var(--p-light); border-radius:10px; padding:10px 14px;
+  font-size:0.82em; color:#6a4060; margin-top:14px; line-height:1.8;
+}
+
+/* ── MAIN ── */
+.main-wrap { max-width:860px; margin:0 auto; padding:20px 16px 50px; }
+
+.trial-bar {
+  background:#FFF8E8; border:1.5px solid #F0D080; border-radius:10px;
+  padding:9px 14px; font-size:0.82em; text-align:center;
+  color:#7a5800; margin-bottom:16px;
+}
+
+.card { background:#fff; border-radius:var(--radius); padding:22px; box-shadow:var(--card-shadow); }
+.card-title {
+  font-family:var(--font-head); font-size:0.95em; font-weight:700; color:var(--p);
+  border-left:4px solid var(--p); padding-left:10px; margin-bottom:16px;
+}
+.tab-pane { display:none; }
+.tab-pane.on { display:block; }
+
+.f-group { margin-bottom:14px; }
+.f-label { display:block; font-size:0.82em; font-weight:700; color:#7a5060; margin-bottom:5px; }
+.f-input,.f-textarea {
+  width:100%; padding:10px 14px; border:1.5px solid #e8d0e0;
+  border-radius:12px; font-family:var(--font-main); font-size:0.88em;
+  color:#3a2030; background:#FDF7FA; transition:border-color 0.2s;
+}
+.f-input:focus,.f-textarea:focus { outline:none; border-color:var(--p); background:#fff; }
+.f-textarea { resize:vertical; line-height:1.7; }
+
+.gen-btn {
+  width:100%; padding:14px; background:var(--p-grad); color:#fff;
+  border:none; border-radius:14px; font-family:var(--font-head);
+  font-size:1em; font-weight:700; cursor:pointer; letter-spacing:0.06em;
+  box-shadow:0 4px 16px rgba(193,53,132,0.28); transition:all 0.2s; margin-top:4px;
+}
+.gen-btn:hover { transform:translateY(-2px); box-shadow:0 6px 20px rgba(193,53,132,0.38); }
+.gen-btn:active { transform:translateY(0); }
+
+.copy-btn {
+  display:inline-flex; align-items:center; gap:6px; margin-top:8px;
+  padding:7px 18px; background:#fff; color:var(--p);
+  border:2px solid var(--p); border-radius:10px;
+  font-family:var(--font-main); font-size:0.85em; font-weight:700;
+  cursor:pointer; transition:all 0.18s;
+}
+.copy-btn:hover { background:var(--p); color:#fff; }
+.copy-btn.copied { background:#4CAF50; border-color:#4CAF50; color:#fff; }
+
+.out-section { margin-top:18px; }
+.out-label { font-size:0.8em; font-weight:700; color:var(--p); margin-bottom:6px; }
+.out-box {
+  background:var(--p-light); border:1.5px solid var(--p-accent);
+  border-radius:12px; padding:14px 16px; white-space:pre-wrap;
+  font-size:0.88em; line-height:1.85; color:#3a2030; min-height:80px;
+}
+.out-divider { border:none; border-top:1.5px dashed var(--p-accent); margin:18px 0; }
+
+.loading { display:none; text-align:center; padding:28px; color:var(--p); }
+.spin {
+  display:inline-block; width:28px; height:28px;
+  border:3px solid var(--p-accent); border-top-color:var(--p);
+  border-radius:50%; animation:spin 0.75s linear infinite; margin-bottom:10px;
+}
+@keyframes spin { to { transform:rotate(360deg); } }
+
+/* PHOTO TIPS */
+.tips-card { background:#fff; border-radius:var(--radius); overflow:hidden; box-shadow:var(--card-shadow); margin-top:18px; }
+.tips-head {
+  display:flex; justify-content:space-between; align-items:center;
+  padding:16px 22px; cursor:pointer; font-family:var(--font-head);
+  font-size:0.95em; font-weight:700; color:var(--p); user-select:none;
+}
+.tips-body { display:none; padding:0 22px 22px; }
+.tips-body.open { display:block; }
+.tips-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(180px,1fr)); gap:12px; margin-top:4px; }
+.tip-c { background:var(--p-light); border-radius:12px; padding:14px; font-size:0.83em; line-height:1.75; }
+.tip-c strong { display:block; color:var(--p); font-weight:700; margin-bottom:4px; }
+
+/* MODAL */
+.modal-ov {
+  display:none; position:fixed; inset:0; background:rgba(50,10,40,0.55);
+  z-index:999; justify-content:center; align-items:center; backdrop-filter:blur(3px);
+}
+.modal-ov.show { display:flex; }
+.modal-box {
+  background:#fff; border-radius:22px; padding:36px 28px;
+  max-width:360px; width:92%; text-align:center;
+  box-shadow:0 20px 60px rgba(0,0,0,0.25); animation:popIn 0.25s ease;
+}
+@keyframes popIn { from { transform:scale(0.85); opacity:0; } to { transform:scale(1); opacity:1; } }
+.modal-box h2 { font-family:var(--font-head); font-size:1.25em; color:var(--p); margin-bottom:12px; }
+.modal-box p { font-size:0.86em; color:#7a5060; margin-bottom:20px; line-height:1.8; }
+.modal-pw {
+  width:100%; padding:12px; border:2px solid #e8d0e0; border-radius:12px;
+  font-size:1em; text-align:center; letter-spacing:0.15em;
+  font-family:var(--font-main); margin-bottom:12px;
+}
+.modal-pw:focus { outline:none; border-color:var(--p); }
+.modal-btn {
+  width:100%; padding:12px; background:var(--p-grad); color:#fff;
+  border:none; border-radius:12px; font-family:var(--font-head);
+  font-size:1em; font-weight:700; cursor:pointer;
+}
+.modal-err { color:#E74C3C; font-size:0.82em; display:none; margin-top:6px; }
+.modal-link { font-size:0.8em; color:#aaa; margin-top:16px; }
+.modal-link a { color:var(--p); }
+
+.footer { text-align:center; padding:20px; font-size:0.78em; color:#b09aaa; border-top:1px solid #F0E4EA; margin-top:10px; }
+</style>
+</head>
+<body>
+
+<!-- MODAL -->
+<div class="modal-ov" id="modalOv">
+  <div class="modal-box">
+    <h2>🔐 パスワードを入力してください</h2>
+    <p>無料お試し3回を使い切りました。<br>ご購入後にお届けしたパスワードを<br>入力して制限を解除してください。</p>
+    <input type="password" class="modal-pw" id="pwInput" placeholder="パスワードを入力">
+    <div class="modal-err" id="pwErr">❌ パスワードが違います</div>
+    <button class="modal-btn" onclick="checkPw()">解除する ✨</button>
+    <div class="modal-link">未購入の方は <a href="https://buy.stripe.com/XXXXXXXX" target="_blank">こちらから購入 ¥2,980</a></div>
+  </div>
+</div>
+
+<!-- BACKDROP -->
+<div class="panel-backdrop" id="backdrop" onclick="closePanels()"></div>
+
+<!-- 設定パネル -->
+<div class="slide-panel" id="settingPanel">
+  <div class="sp-header">
+    <div class="sp-title">⚙️ あなたの設定</div>
+    <button class="sp-close" onclick="closePanels()">✕</button>
+  </div>
+  <label class="s-label">作家名 / ブランド名</label>
+  <input type="text" class="s-input" id="brandName" placeholder="例：てしごとAkko">
+  <label class="s-label">📷 Instagramアカウント</label>
+  <input type="text" class="s-input" id="igAcc" placeholder="例：@handmade_akko">
+  <label class="s-label">🐦 X（Twitter）アカウント</label>
+  <input type="text" class="s-input" id="xAcc" placeholder="例：@handmade_akko">
+  <label class="s-label">🧵 Threadsアカウント</label>
+  <input type="text" class="s-input" id="thAcc" placeholder="例：@handmade_akko">
+  <label class="s-label">🛒 BASEショップURL</label>
+  <input type="text" class="s-input" id="baseUrl" placeholder="例：https://xxxxx.base.shop">
+  <label class="s-label">✂️ ジャンルを選ぶ</label>
+  <div class="genre-wrap">
+    <button class="genre-btn on" onclick="pickGenre(this,'アクセサリー・ピアス')">💍 アクセサリー</button>
+    <button class="genre-btn"   onclick="pickGenre(this,'布小物・ポーチ')">👜 布小物</button>
+    <button class="genre-btn"   onclick="pickGenre(this,'レジン作品')">🌸 レジン</button>
+    <button class="genre-btn"   onclick="pickGenre(this,'刺繍・刺し子')">🪡 刺繍</button>
+    <button class="genre-btn"   onclick="pickGenre(this,'陶芸・一点物')">🏺 陶芸</button>
+    <button class="genre-btn"   onclick="pickGenre(this,'キャンドル・ソープ')">🕯️ キャンドル</button>
+  </div>
+  <div class="save-note">※ 設定は自動で保存されます。<br>一度入力すれば次回から自動入力されます。</div>
+</div>
+
+<!-- 使い方パネル -->
+<div class="slide-panel" id="usagePanel">
+  <div class="sp-header">
+    <div class="sp-title">📖 使い方とできること</div>
+    <button class="sp-close" onclick="closePanels()">✕</button>
+  </div>
+  <div class="usage-section">
+    <div class="usage-stitle">🎯 このアプリでできること</div>
+    <ul class="usage-list">
+      <li>Instagramプロフィールをプロ仕様に整える</li>
+      <li>投稿キャプション＋ハッシュタグを一発生成</li>
+      <li>X・Threadsの集客投稿を自動作成</li>
+      <li>すべての文章にBASEへの誘導を自然に組み込む</li>
+      <li>スマホ撮影のコツで写真力アップ</li>
+    </ul>
+  </div>
+  <div class="usage-section">
+    <div class="usage-stitle">📝 使い方 ステップ</div>
+    <ol class="usage-steps">
+      <li>⚙️ 設定ボタンを押してブランド名・各SNSアカウント・BASEのURLを入力する</li>
+      <li>タブ①でInstagramのプロフィール文を整える</li>
+      <li>タブ②で作品のキャプションを生成してコピーする</li>
+      <li>タブ③でX・Threadsの集客投稿を作ってシェアする</li>
+      <li>下の「撮影の極意」を参考に写真のクオリティを上げる</li>
+    </ol>
+  </div>
+  <div class="usage-section">
+    <div class="usage-stitle">💰 ご利用プラン</div>
+    <ul class="usage-list">
+      <li>無料お試し：3回まで生成できます</li>
+      <li>制限解除：パスワード入力で無制限に</li>
+      <li>パスワードはご購入後にメールでお届けします</li>
+    </ul>
+  </div>
+  <div class="info-box">
+    💡 設定を充実させるほど<br>生成される文章の精度が上がります！<br>まずは設定を埋めるところから始めてください。
+  </div>
+</div>
+
+<!-- ═══ HEADER ═══ -->
+<div class="app-header">
+  <div class="header-top">
+    <button class="hdr-btn" id="settingBtn" onclick="togglePanel('setting')">
+      <span class="hdr-btn-icon">⚙️</span>
+      <span>あなたの設定</span>
+    </button>
+    <div class="header-center">
+      <div class="header-title">🎀 ハンドメイドみっけ</div>
+      <div class="header-sub">Instagram × BASE × SNS で「作品を売る仕組み」を一発生成</div>
+    </div>
+    <button class="hdr-btn" id="usageBtn" onclick="togglePanel('usage')">
+      <span class="hdr-btn-icon">📖</span>
+      <span>使い方</span>
+    </button>
+  </div>
+  <div class="theme-row">
+    <button class="theme-dot t-ig on"   onclick="setTheme('ig')"     title="Instagram"></button>
+    <button class="theme-dot t-pink"    onclick="setTheme('pink')"   title="ピンク"></button>
+    <button class="theme-dot t-blue"    onclick="setTheme('blue')"   title="ブルー"></button>
+    <button class="theme-dot t-green"   onclick="setTheme('green')"  title="グリーン"></button>
+    <button class="theme-dot t-yellow"  onclick="setTheme('yellow')" title="イエロー"></button>
+  </div>
+  <div class="tab-nav">
+    <button class="tab-nav-btn on" onclick="switchTab(0)">① Instagramプロフィール</button>
+    <button class="tab-nav-btn"    onclick="switchTab(1)">② Instagram投稿文</button>
+    <button class="tab-nav-btn"    onclick="switchTab(2)">③ X / Threads集客</button>
+  </div>
+</div>
+
+<!-- ═══ MAIN ═══ -->
+<div class="main-wrap">
+
+  <div class="trial-bar" id="trialBar">
+    ✨ 無料お試し：残り <strong id="trialCount">3</strong> 回
+  </div>
+
+  <!-- TAB 1 -->
+  <div class="tab-pane on card" id="pane0">
+    <div class="card-title">① Instagramプロフィール文を作る</div>
+    <div style="font-size:0.84em;color:#7a5060;margin-bottom:16px;line-height:1.8;">
+      プロフィール欄はあなたの「看板」です。初めて見た人が「この人から買いたい」と思えるプロフィールを一緒に作りましょう。
+    </div>
+    <div class="f-group">
+      <label class="f-label">あなたのハンドメイドへの想い・こだわり</label>
+      <textarea class="f-textarea" id="p_appeal" rows="3" placeholder="例：子育て中に出会った手芸。温もりのある暮らしを届けたくて始めました。一点一点に気持ちを込めて制作しています。"></textarea>
+    </div>
+    <div class="f-group">
+      <label class="f-label">得意な作品・代表作</label>
+      <textarea class="f-textarea" id="p_works" rows="2" placeholder="例：天然石を使ったピアス、シルバーアクセサリー"></textarea>
+    </div>
+    <button class="gen-btn" onclick="genProfile()">✨ プロフィールを生成する</button>
+    <div class="loading" id="load0"><div class="spin"></div><br>AIが生成しています…少々お待ちください</div>
+    <div id="out0" style="display:none;">
+      <hr class="out-divider">
+      <div class="out-section">
+        <div class="out-label">📝 Instagramプロフィール文（コピペ用）</div>
+        <div class="out-box" id="o_prof"></div>
+        <button class="copy-btn" onclick="copyEl('o_prof',this)">📋 コピーする</button>
+      </div>
+      <div class="out-section">
+        <div class="out-label">🏷️ ハイライト見出し案</div>
+        <div class="out-box" id="o_hl"></div>
+        <button class="copy-btn" onclick="copyEl('o_hl',this)">📋 コピーする</button>
+      </div>
+      <div class="out-section">
+        <div class="out-label">🔗 BASEへの誘導テキスト（ストーリーズ用）</div>
+        <div class="out-box" id="o_link"></div>
+        <button class="copy-btn" onclick="copyEl('o_link',this)">📋 コピーする</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- TAB 2 -->
+  <div class="tab-pane card" id="pane1">
+    <div class="card-title">② Instagram投稿キャプションを作る</div>
+    <div style="font-size:0.84em;color:#7a5060;margin-bottom:16px;line-height:1.8;">
+      作品の情報を入力するだけで、ハッシュタグ込みの投稿文を丸ごと生成します。
+    </div>
+    <div class="f-group">
+      <label class="f-label">作品名</label>
+      <input type="text" class="f-input" id="po_name" placeholder="例：天然石×シルバーのロングピアス">
+    </div>
+    <div class="f-group">
+      <label class="f-label">素材・サイズ・制作時間</label>
+      <textarea class="f-textarea" id="po_detail" rows="2" placeholder="例：ラピスラズリ、シルバー925、長さ約6cm、制作時間3時間"></textarea>
+    </div>
+    <div class="f-group">
+      <label class="f-label">こだわりポイント・制作秘話（自由に！）</label>
+      <textarea class="f-textarea" id="po_story" rows="3" placeholder="例：100個以上の石の中から色と形を選びました。揺れるたびに光の角度が変わるよう設計しています。"></textarea>
+    </div>
+    <div class="f-group">
+      <label class="f-label">価格（BASEで販売中の場合）</label>
+      <input type="text" class="f-input" id="po_price" placeholder="例：3,800円（税込）">
+    </div>
+    <button class="gen-btn" onclick="genPost()">✨ 投稿文を生成する</button>
+    <div class="loading" id="load1"><div class="spin"></div><br>AIが生成しています…少々お待ちください</div>
+    <div id="out1" style="display:none;">
+      <hr class="out-divider">
+      <div class="out-section">
+        <div class="out-label">📸 Instagramキャプション（ハッシュタグ込み）</div>
+        <div class="out-box" id="o_cap"></div>
+        <button class="copy-btn" onclick="copyEl('o_cap',this)">📋 コピーする</button>
+      </div>
+      <div class="out-section">
+        <div class="out-label">💭 ストーリーズ用一言テキスト</div>
+        <div class="out-box" id="o_str"></div>
+        <button class="copy-btn" onclick="copyEl('o_str',this)">📋 コピーする</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- TAB 3 -->
+  <div class="tab-pane card" id="pane2">
+    <div class="card-title">③ X / Threads 集客投稿を作る</div>
+    <div style="font-size:0.84em;color:#7a5060;margin-bottom:16px;line-height:1.8;">
+      InstagramはフォロワーへのPR、X・Threadsは新しい人への発見の場です。両方に投稿して集客を広げましょう。
+    </div>
+    <div class="f-group">
+      <label class="f-label">今回の作品のポイント（一言で）</label>
+      <input type="text" class="f-input" id="sn_point" placeholder="例：揺れるたびに輝く天然石のピアス">
+    </div>
+    <div class="f-group">
+      <label class="f-label">InstagramのURL（投稿URLがあれば）</label>
+      <input type="text" class="f-input" id="sn_igurl" placeholder="例：https://www.instagram.com/p/XXXXXXX">
+    </div>
+    <button class="gen-btn" onclick="genSNS()">✨ 集客投稿を生成する</button>
+    <div class="loading" id="load2"><div class="spin"></div><br>AIが生成しています…少々お待ちください</div>
+    <div id="out2" style="display:none;">
+      <hr class="out-divider">
+      <div class="out-section">
+        <div class="out-label">🐦 X（Twitter）投稿文</div>
+        <div class="out-box" id="o_x"></div>
+        <button class="copy-btn" onclick="copyEl('o_x',this)">📋 コピーする</button>
+      </div>
+      <div class="out-section">
+        <div class="out-label">🧵 Threads 投稿文</div>
+        <div class="out-box" id="o_th"></div>
+        <button class="copy-btn" onclick="copyEl('o_th',this)">📋 コピーする</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- PHOTO TIPS -->
+  <div class="tips-card">
+    <div class="tips-head" onclick="toggleTips()">
+      📷 スマホ撮影の極意 〜売れる写真の6か条〜
+      <span id="tipsArrow">▼</span>
+    </div>
+    <div class="tips-body" id="tipsBody">
+      <div class="tips-grid">
+        <div class="tip-c"><strong>① 光は窓際の自然光が最強</strong>曇りの日の窓際が最も均一な光に。直射日光は避け、午前中の柔らかい光がおすすめです。</div>
+        <div class="tip-c"><strong>② 背景は白・グレー・木目で統一</strong>シンプルな背景ほど作品が引き立ちます。白い画用紙や木目調のランチョンマットが100均で手に入ります。</div>
+        <div class="tip-c"><strong>③ 3アングルで必ず撮る</strong>真上からの俯瞰・斜め45度・正面の3枚が基本。複数枚投稿できるので全部使いましょう。</div>
+        <div class="tip-c"><strong>④ 反射板で影を消す</strong>白いコピー用紙を光の反対側に置くだけで影がやわらかくなり、プロっぽく仕上がります。</div>
+        <div class="tip-c"><strong>⑤ 加工はトーン統一だけでOK</strong>明るさを少し上げるだけで十分。Lightroomの無料アプリでプリセットを作ると統一感が出ます。</div>
+        <div class="tip-c"><strong>⑥ 温もりのある写真が刺さる</strong>実際に身につけた写真・手元写真・テーブルに並べた写真。人の温もりを感じる写真はInstagramで強いです。</div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<div class="footer">🎀 ハンドメイドみっけ｜Smile Plus Consulting<br>「考えるを、ひとりにしない」</div>
+
+<script>
+const WORKER='https://yymmatsu.workers.dev', PW='hand2025', MAX=3;
+const CNT_K='hmm_cnt', UNL_K='hmm_unlocked', THM_K='hmm_theme';
+
+const THEMES={
+  ig:    {p:'#C13584',pl:'#FDF0F8',pd:'#833AB4',pa:'#F5B8D8',g:'linear-gradient(135deg,#833AB4 0%,#C13584 40%,#E1306C 70%,#F77737 100%)'},
+  pink:  {p:'#E8608A',pl:'#FDF0F4',pd:'#C04070',pa:'#F5B8CB',g:'linear-gradient(135deg,#E8608A,#C04070)'},
+  blue:  {p:'#4A90D9',pl:'#EBF4FF',pd:'#2E6FB0',pa:'#A8D4F5',g:'linear-gradient(135deg,#4A90D9,#2E6FB0)'},
+  green: {p:'#48B87A',pl:'#EDFAF3',pd:'#2E8A58',pa:'#A3DFC0',g:'linear-gradient(135deg,#48B87A,#2E8A58)'},
+  yellow:{p:'#F9A825',pl:'#FFF8E0',pd:'#E08020',pa:'#FFD97A',g:'linear-gradient(135deg,#F9A825,#E08020)'}
+};
+
+function setTheme(n){
+  const t=THEMES[n],r=document.documentElement.style;
+  r.setProperty('--p',t.p); r.setProperty('--p-light',t.pl);
+  r.setProperty('--p-dark',t.pd); r.setProperty('--p-accent',t.pa);
+  r.setProperty('--p-grad',t.g);
+  document.querySelectorAll('.theme-dot').forEach(d=>d.classList.remove('on'));
+  document.querySelector('.theme-dot.t-'+n).classList.add('on');
+  localStorage.setItem(THM_K,n);
+}
+
+let genre='アクセサリー・ピアス';
+function pickGenre(btn,g){ document.querySelectorAll('.genre-btn').forEach(b=>b.classList.remove('on')); btn.classList.add('on'); genre=g; }
+
+function switchTab(i){
+  document.querySelectorAll('.tab-nav-btn').forEach((b,idx)=>b.classList.toggle('on',idx===i));
+  document.querySelectorAll('.tab-pane').forEach((p,idx)=>p.classList.toggle('on',idx===i));
+}
+
+function togglePanel(w){
+  const sp=document.getElementById(w+'Panel'),btn=document.getElementById(w+'Btn'),bd=document.getElementById('backdrop');
+  const isOpen=sp.classList.contains('open');
+  ['setting','usage'].forEach(n=>{document.getElementById(n+'Panel').classList.remove('open');document.getElementById(n+'Btn').classList.remove('active');});
+  if(!isOpen){sp.classList.add('open');btn.classList.add('active');bd.classList.add('show');}
+  else{bd.classList.remove('show');}
+}
+function closePanels(){
+  ['setting','usage'].forEach(n=>{document.getElementById(n+'Panel').classList.remove('open');document.getElementById(n+'Btn').classList.remove('active');});
+  document.getElementById('backdrop').classList.remove('show');
+}
+
+function toggleTips(){
+  const b=document.getElementById('tipsBody'),a=document.getElementById('tipsArrow');
+  b.classList.toggle('open'); a.textContent=b.classList.contains('open')?'▲':'▼';
+}
+
+const cnt=()=>parseInt(localStorage.getItem(CNT_K)||'0');
+const isUnlk=()=>localStorage.getItem(UNL_K)==='true';
+
+function updateBar(){
+  const bar=document.getElementById('trialBar');
+  if(isUnlk()){bar.style.display='none';return;}
+  const rem=Math.max(0,MAX-cnt());
+  document.getElementById('trialCount').textContent=rem;
+  if(rem===0){bar.style.background='#FFE4E4';bar.style.borderColor='#F5C6C6';}
+}
+
+function canGen(){
+  if(isUnlk())return true;
+  if(cnt()<MAX)return true;
+  document.getElementById('modalOv').classList.add('show');
+  return false;
+}
+function addCnt(){localStorage.setItem(CNT_K,cnt()+1);updateBar();}
+
+function checkPw(){
+  const v=document.getElementById('pwInput').value.trim();
+  if(v===PW){localStorage.setItem(UNL_K,'true');document.getElementById('modalOv').classList.remove('show');updateBar();alert('✅ 解除完了！制限なしでご利用いただけます🎀');}
+  else{document.getElementById('pwErr').style.display='block';}
+}
+
+function cfg(){return{name:document.getElementById('brandName').value||'(ブランド名未設定)',ig:document.getElementById('igAcc').value||'',x:document.getElementById('xAcc').value||'',th:document.getElementById('thAcc').value||'',base:document.getElementById('baseUrl').value||'',genre:genre};}
+
+async function callAI(prompt){
+  const res=await fetch(WORKER,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:1800,messages:[{role:'user',content:prompt}]})});
+  const d=await res.json();
+  if(d.error)throw new Error(d.error.message);
+  return d.content[0].text;
+}
+function parseJSON(r){return JSON.parse(r.replace(/```json|```/g,'').trim());}
+
+async function genProfile(){
+  if(!canGen())return;
+  const s=cfg(),appeal=document.getElementById('p_appeal').value,works=document.getElementById('p_works').value;
+  if(!appeal){alert('想い・こだわりを入力してください');return;}
+  show('load0');hide('out0');
+  const p=`あなたはハンドメイド作家のInstagramブランディング専門家です。以下の情報でInstagramプロフィール文セットを作成してください。
+作家名：${s.name} ジャンル：${s.genre} 想い・こだわり：${appeal} 得意な作品：${works} BASEショップURL：${s.base}
+以下のJSONのみ返答（前後にテキスト不要）：{"profile":"140字以内のInstagramプロフィール文。温かみがあり購買意欲を高める。BASEへの誘導を自然に含める。絵文字適度に使う。","highlights":"ハイライト見出し案5つを改行区切りで。絵文字付き。","linkText":"ストーリーズでBASEリンクをプロフィールに誘導する文章。2〜3行。絵文字あり。温かみある文体。"}`;
+  try{const j=parseJSON(await callAI(p));document.getElementById('o_prof').textContent=j.profile;document.getElementById('o_hl').textContent=j.highlights;document.getElementById('o_link').textContent=j.linkText;show('out0');addCnt();}
+  catch(e){alert('生成に失敗しました。もう一度お試しください。\n'+e.message);}
+  finally{hide('load0');}
+}
+
+async function genPost(){
+  if(!canGen())return;
+  const s=cfg(),name=document.getElementById('po_name').value,detail=document.getElementById('po_detail').value,story=document.getElementById('po_story').value,price=document.getElementById('po_price').value;
+  if(!name){alert('作品名を入力してください');return;}
+  show('load1');hide('out1');
+  const p=`あなたはハンドメイド作家のInstagram投稿専門ライターです。以下の情報で売れるInstagramキャプションを作成してください。
+作家名：${s.name} ジャンル：${s.genre} 作品名：${name} 素材・サイズ・制作時間：${detail} こだわり・制作秘話：${story} 価格：${price||'価格はDMまたはBASEショップにて'} BASEショップURL：${s.base} Instagramアカウント：${s.ig}
+以下のJSONのみ返答：{"caption":"Instagram投稿キャプション全文。①作品の魅力・情景描写②こだわり・制作秘話③BASEへの購入誘導④ハッシュタグ25〜30個。絵文字を自然に使う。","storyText":"ストーリーズ用の購買を促す短いテキスト。2行以内。絵文字あり。プロフィールのリンクから購入できますという誘導を含める。"}`;
+  try{const j=parseJSON(await callAI(p));document.getElementById('o_cap').textContent=j.caption;document.getElementById('o_str').textContent=j.storyText;show('out1');addCnt();}
+  catch(e){alert('生成に失敗しました。もう一度お試しください。\n'+e.message);}
+  finally{hide('load1');}
+}
+
+async function genSNS(){
+  if(!canGen())return;
+  const s=cfg(),point=document.getElementById('sn_point').value,igurl=document.getElementById('sn_igurl').value;
+  if(!point){alert('作品のポイントを入力してください');return;}
+  show('load2');hide('out2');
+  const p=`あなたはハンドメイド作家のSNS集客専門家です。以下の情報でXとThreadsの集客投稿文を作成してください。
+作家名：${s.name} ジャンル：${s.genre} 作品のポイント：${point} InstagramのURL：${igurl||'（Instagramアカウント：'+s.ig+'）'} BASEショップURL：${s.base}
+以下のJSONのみ返答：{"xPost":"X用投稿文。140字以内厳守。作品の魅力を端的に伝えInstagramへ誘導するURLを含める。ハッシュタグ2〜3個。","threadsPost":"Threads用投稿文。250字程度。温かみある語り口。作品への想いや制作の話を盛り込む。絵文字を使う。最後にBASEかInstagramへの誘導。"}`;
+  try{const j=parseJSON(await callAI(p));document.getElementById('o_x').textContent=j.xPost;document.getElementById('o_th').textContent=j.threadsPost;show('out2');addCnt();}
+  catch(e){alert('生成に失敗しました。もう一度お試しください。\n'+e.message);}
+  finally{hide('load2');}
+}
+
+function copyEl(id,btn){
+  navigator.clipboard.writeText(document.getElementById(id).textContent).then(()=>{
+    const o=btn.innerHTML; btn.innerHTML='✅ コピーしました！'; btn.classList.add('copied');
+    setTimeout(()=>{btn.innerHTML=o;btn.classList.remove('copied');},2000);
+  });
+}
+
+function show(id){document.getElementById(id).style.display='block';}
+function hide(id){document.getElementById(id).style.display='none';}
+
+const FIELDS=['brandName','igAcc','xAcc','thAcc','baseUrl'];
+function saveSettings(){FIELDS.forEach(id=>localStorage.setItem('hmm_'+id,document.getElementById(id).value));}
+function loadSettings(){
+  FIELDS.forEach(id=>{const v=localStorage.getItem('hmm_'+id);if(v)document.getElementById(id).value=v;});
+  setTheme(localStorage.getItem(THM_K)||'ig');
+}
+
+document.addEventListener('DOMContentLoaded',()=>{
+  loadSettings(); updateBar();
+  FIELDS.forEach(id=>document.getElementById(id).addEventListener('input',saveSettings));
+  document.getElementById('pwInput').addEventListener('keydown',e=>{if(e.key==='Enter')checkPw();});
+});
+</script>
+</body>
+</html>
