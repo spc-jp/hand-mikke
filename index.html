@@ -990,7 +990,13 @@ body { font-family:var(--font-main); background:#FBF7FA; color:#3a2030; min-heig
         <div class="out-box" id="o_link"></div>
         <button class="copy-btn" onclick="copyEl('o_link',this)">📋 コピーする</button>
       </div>
-      <button class="copy-all-btn" onclick="copyAll(['o_acct','o_prof','o_hl','o_link'], this)">
+      <div class="out-section">
+        <div class="out-label">🛒 BASEショップ紹介文（ショップTOPに貼り付け用）</div>
+        <div style="font-size:0.76em;color:#9a7080;margin-bottom:5px;">作家の想い・ジャンル・BASEならではの温かみを込めた紹介文です</div>
+        <div class="out-box" id="o_base_prof"></div>
+        <button class="copy-btn" onclick="copyEl('o_base_prof',this)">📋 コピーする</button>
+      </div>
+      <button class="copy-all-btn" onclick="copyAll(['o_acct','o_prof','o_hl','o_link','o_base_prof'], this)">
         📋 ①プロフィール全部まとめてコピー
       </button>
     </div>
@@ -1042,8 +1048,32 @@ body { font-family:var(--font-main); background:#FBF7FA; color:#3a2030; min-heig
         <div class="out-box" id="o_str"></div>
         <button class="copy-btn" onclick="copyEl('o_str',this)">📋 コピーする</button>
       </div>
-      <button class="copy-all-btn" onclick="copyAll(['o_cap','o_str'], this)">
-        📋 ②投稿文全部まとめてコピー
+      <hr class="out-divider">
+      <div style="font-family:var(--font-head);font-size:0.9em;font-weight:700;color:var(--p);margin-bottom:12px;display:flex;align-items:center;gap:6px;">
+        <span style="background:var(--p);color:#fff;border-radius:8px;padding:2px 10px;font-size:0.85em;">BASE</span>
+        商品登録用コンテンツ
+      </div>
+      <div style="font-size:0.8em;color:#7a5060;margin-bottom:14px;line-height:1.8;background:var(--p-light);border-radius:10px;padding:10px 14px;">
+        💡 BASEの商品登録画面にそのまま貼り付けて使えます。<br>
+        タイトル→説明文→価格の順にコピーしてください。
+      </div>
+      <div class="out-section">
+        <div class="out-label">🏷️ BASE商品タイトル（30字前後・検索キーワード入り）</div>
+        <div class="out-box" id="o_base_title"></div>
+        <button class="copy-btn" onclick="copyEl('o_base_title',this)">📋 コピーする</button>
+      </div>
+      <div class="out-section">
+        <div class="out-label">📝 BASE商品説明文（素材・サイズ・こだわり・注意事項）</div>
+        <div class="out-box" id="o_base_desc"></div>
+        <button class="copy-btn" onclick="copyEl('o_base_desc',this)">📋 コピーする</button>
+      </div>
+      <div class="out-section">
+        <div class="out-label">💰 価格・送料の案内テキスト（商品説明末尾に追記用）</div>
+        <div class="out-box" id="o_base_price"></div>
+        <button class="copy-btn" onclick="copyEl('o_base_price',this)">📋 コピーする</button>
+      </div>
+      <button class="copy-all-btn" onclick="copyAll(['o_cap','o_str','o_base_title','o_base_desc','o_base_price'], this)">
+        📋 ②投稿文＋BASE商品登録 全部まとめてコピー
       </button>
     </div>
   </div>
@@ -1618,7 +1648,7 @@ async function genProfile(){
   const s=cfg(),appeal=document.getElementById('p_appeal').value,works=document.getElementById('p_works').value;
   if(!appeal){alert('想い・こだわりを入力してください');return;}
   show('load0');hide('out0');
-  const p=`あなたはハンドメイド作家のInstagramブランディング専門家です。以下の情報でInstagramプロフィール文セットを作成してください。投稿者は女性ハンドメイド作家です。
+  const p=`あなたはハンドメイド作家のInstagram・BASEブランディング専門家です。以下の情報でプロフィール文セットを作成してください。投稿者は女性ハンドメイド作家です。
 
 作家名：${s.name}
 ジャンル：${s.genre}
@@ -1631,7 +1661,8 @@ BASEショップURL：${s.base}
   "accountNames": "Instagramアカウント名の提案3案。\n【強い】@提案名：選ぶ理由一言\n【魅力的】@提案名：選ぶ理由一言\n【わかりやすい】@提案名：選ぶ理由一言\nの形式で。英字・数字・アンダーバーのみ使用。",
   "profile": "140字以内のInstagramプロフィール文。女性らしい温かみある文体。購買意欲を自然に高める。BASEへの誘導を含める。絵文字を適度に使う。",
   "highlights": "ハイライト見出し案5つを改行区切りで。絵文字付き。",
-  "linkText": "ストーリーズでBASEリンクをプロフィールに誘導する文章。2〜3行。絵文字あり。女性らしい温かみある文体。"
+  "linkText": "ストーリーズでBASEリンクをプロフィールに誘導する文章。2〜3行。絵文字あり。女性らしい温かみある文体。",
+  "baseShopProfile": "BASEショップのTOP紹介文。200〜300字。【構成】①作家の自己紹介と想い（2〜3行）②得意なジャンル・作品の特徴（1〜2行）③手作りへのこだわり（1〜2行）④最後にお客様へのメッセージ（1行）。絵文字を適度に使い、温かみと誠実さが伝わる文体で。"
 }`;
   try{
     const j=parseJSON(await callAI(p));
@@ -1639,6 +1670,7 @@ BASEショップURL：${s.base}
     document.getElementById('o_prof').textContent=j.profile;
     document.getElementById('o_hl').textContent=j.highlights;
     document.getElementById('o_link').textContent=j.linkText;
+    document.getElementById('o_base_prof').textContent=j.baseShopProfile||'';
     show('out0');addCnt();
   }
   catch(e){alert('生成に失敗しました。もう一度お試しください。\n'+e.message);}
@@ -1649,7 +1681,7 @@ async function genPost(){
   const s=cfg(),name=document.getElementById('po_name').value,detail=document.getElementById('po_detail').value,story=document.getElementById('po_story').value,price=document.getElementById('po_price').value;
   if(!name){alert('作品名を入力してください');return;}
   show('load1');hide('out1');
-  const p=`あなたは女性ハンドメイド作家を専門に支援するInstagramライターです。見た人が思わず「欲しい」「買いたい」と感じる投稿キャプションを作成してください。
+  const p=`あなたは女性ハンドメイド作家を専門に支援するInstagramライター兼BASEショップ運営アドバイザーです。見た人が「欲しい」「買いたい」と感じるInstagram投稿コンテンツと、BASEの商品登録用コンテンツを同時に作成してください。
 
 作家名：${s.name}
 ジャンル：${s.genre}
@@ -1662,12 +1694,23 @@ Instagramアカウント：${s.ig}
 
 文章の方向性：女性らしい温かく親しみやすい文体。作品を持ったときの気持ち・シーン・感動を想像させる。絵文字を段落ごとに1〜2個自然に散りばめる。最後に購入を自然に背中を押す一文。
 
-以下のJSONのみ返答：
+以下のJSONのみ返答（前後にテキスト不要）：
 {
-  "caption": "Instagram投稿キャプション全文。【構成】①作品を手にしたときのシーン・気持ちの描写（2〜3行、絵文字あり）②こだわりポイント・制作秘話（2〜3行、絵文字あり）③この作品が似合う人・シーンの提案（1〜2行）④購入への背中を押す一文＋BASEへの誘導（1〜2行）⑤改行してハッシュタグ7個をスペース区切り横並びで（ジャンル・素材・雰囲気・購買層を混ぜる）",
-  "storyText": "ストーリーズ用テキスト。2行以内。絵文字あり。作品の魅力を一言で伝え、プロフィールのリンクから購入できますという誘導を入れる。女性らしいやわらかな文体。"
+  "caption": "Instagram投稿キャプション全文。①作品を手にしたときのシーン・気持ちの描写（2〜3行・絵文字あり）②こだわりポイント・制作秘話（2〜3行・絵文字あり）③この作品が似合う人・シーンの提案（1〜2行）④購入への背中を押す一文＋BASEへの誘導（1〜2行）⑤改行してハッシュタグ7個をスペース区切り横並びで",
+  "storyText": "ストーリーズ用テキスト。2行以内。絵文字あり。作品の魅力を一言で伝えプロフィールのリンクから購入できますという誘導を入れる。女性らしいやわらかな文体。",
+  "baseTitle": "BASE商品タイトル。30字前後。検索されやすいキーワード（素材・ジャンル・特徴）を自然に盛り込む。【一点物】などの訴求ワードも入れる。",
+  "baseDesc": "BASE商品説明文。①この作品の世界観・魅力（2〜3行）②素材・サイズ・重さなどのスペック（箇条書き）③制作へのこだわり（2行）④お手入れ・取り扱い注意事項（1〜2行）⑤配送・ラッピングについて一言。全体300〜400字。絵文字を適度に使う。",
+  "basePrice": "価格・送料の案内テキスト。価格の表示・送料についての案内・ラッピング対応などを3〜4行で。"
 }`;
-  try{const j=parseJSON(await callAI(p));document.getElementById('o_cap').textContent=j.caption;document.getElementById('o_str').textContent=j.storyText;show('out1');addCnt();}
+  try{
+    const j=parseJSON(await callAI(p));
+    document.getElementById('o_cap').textContent=j.caption||'';
+    document.getElementById('o_str').textContent=j.storyText||'';
+    document.getElementById('o_base_title').textContent=j.baseTitle||'';
+    document.getElementById('o_base_desc').textContent=j.baseDesc||'';
+    document.getElementById('o_base_price').textContent=j.basePrice||'';
+    show('out1');addCnt();
+  }
   catch(e){alert('生成に失敗しました。もう一度お試しください。\n'+e.message);}
   finally{hide('load1');}
 }
