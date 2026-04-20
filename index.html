@@ -36,7 +36,7 @@
   --font-head: 'Zen Maru Gothic', sans-serif;
 }
 * { box-sizing:border-box; margin:0; padding:0; }
-body { font-family:var(--font-main); background:#FBF7FA; color:#3a2030; min-height:100vh; font-size:14px; line-height:1.7; padding-top:116px; }
+body { font-family:var(--font-main); background:#FBF7FA; color:#3a2030; min-height:100vh; font-size:14px; line-height:1.7; padding-top:162px; }
 
 /* ── HEADER（固定） ── */
 .app-header {
@@ -117,7 +117,7 @@ body { font-family:var(--font-main); background:#FBF7FA; color:#3a2030; min-heig
   position:fixed; top:0; right:-420px; width:380px; max-width:95vw;
   height:100vh; background:#fff; box-shadow:-4px 0 30px rgba(0,0,0,0.18);
   z-index:500; transition:right 0.32s cubic-bezier(0.4,0,0.2,1);
-  overflow-y:auto; padding:114px 22px 40px;
+  overflow-y:auto; padding:170px 22px 40px;
 }
 .slide-panel.open { right:0; }
 .panel-backdrop {
@@ -670,7 +670,7 @@ body { font-family:var(--font-main); background:#FBF7FA; color:#3a2030; min-heig
 @media (max-width: 480px) {
 
   /* ヘッダー全体を少しコンパクトに */
-  body { padding-top: 100px; }
+  body { padding-top: 148px; }
 
   .app-header { padding: 0 12px; }
 
@@ -710,7 +710,7 @@ body { font-family:var(--font-main); background:#FBF7FA; color:#3a2030; min-heig
   .tips-grid { grid-template-columns: 1fr; }
 
   /* スライドパネルを全画面に近く */
-  .slide-panel { width: 100%; max-width: 100vw; right: -100%; padding-top: 100px; }
+  .slide-panel { width: 100%; max-width: 100vw; right: -100%; padding-top: 148px; }
   .slide-panel.open { right: 0; }
 
   /* モーダル */
@@ -721,7 +721,7 @@ body { font-family:var(--font-main); background:#FBF7FA; color:#3a2030; min-heig
    タブレット ( 481px〜768px )
 ════════════════════════ */
 @media (min-width: 481px) and (max-width: 768px) {
-  body { padding-top: 108px; }
+  body { padding-top: 155px; }
   .header-title { font-size: 1.3em; }
   .main-wrap { padding: 16px 14px 40px; }
   .tips-grid { grid-template-columns: 1fr 1fr; }
@@ -1814,8 +1814,7 @@ function copyEl(id,btn){
 function show(id){
   const el=document.getElementById(id);
   if(!el) return;
-  // hm-loading は flex で表示
-  el.style.display = el.classList.contains('hm-loading') ? 'block' : 'block';
+  el.style.display='block';
 }
 function hide(id){
   const el=document.getElementById(id);
