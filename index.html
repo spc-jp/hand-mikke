@@ -1255,9 +1255,12 @@ body { font-family:var(--font-main); background:#FBF7FA; color:#3a2030; min-heig
 <div class="footer">🎀 ハンドメイドみっけ｜Smile Plus Consulting<br>「考えるを、ひとりにしない」</div>
 
 <script>
-const WORKER='https://hand-mikke.yymmatsu.workers.dev', PW='hand2025', MAX=3;
+const WORKER='https://hand-mikke.yymmatsu.workers.dev';
+const PW='hand2025', MAX=3;
 const CNT_K='hmm_cnt', UNL_K='hmm_unlocked', THM_K='hmm_theme';
+const STRIPE_URL='https://buy.stripe.com/28E00i8qKgzHa519J2cV20G';
 
+/* ── テーマ ── */
 const THEMES={
   ig:    {p:'#C13584',pl:'#FDF0F8',pd:'#833AB4',pa:'#F5B8D8',g:'linear-gradient(135deg,#833AB4 0%,#C13584 40%,#E1306C 70%,#F77737 100%)'},
   pink:  {p:'#E8608A',pl:'#FDF0F4',pd:'#C04070',pa:'#F5B8CB',g:'linear-gradient(135deg,#E8608A,#C04070)'},
@@ -1265,466 +1268,366 @@ const THEMES={
   green: {p:'#48B87A',pl:'#EDFAF3',pd:'#2E8A58',pa:'#A3DFC0',g:'linear-gradient(135deg,#48B87A,#2E8A58)'},
   yellow:{p:'#F9A825',pl:'#FFF8E0',pd:'#E08020',pa:'#FFD97A',g:'linear-gradient(135deg,#F9A825,#E08020)'}
 };
-
 function setTheme(n){
-  const t=THEMES[n],r=document.documentElement.style;
+  const t=THEMES[n]; if(!t) return;
+  const r=document.documentElement.style;
   r.setProperty('--p',t.p); r.setProperty('--p-light',t.pl);
   r.setProperty('--p-dark',t.pd); r.setProperty('--p-accent',t.pa);
   r.setProperty('--p-grad',t.g);
   document.querySelectorAll('.theme-dot').forEach(d=>d.classList.remove('on'));
-  document.querySelector('.theme-dot.t-'+n).classList.add('on');
+  const dot=document.querySelector('.theme-dot.t-'+n);
+  if(dot) dot.classList.add('on');
   localStorage.setItem(THM_K,n);
 }
 
+/* ── ジャンル ── */
 let genre='アクセサリー・ピアス';
 function pickGenre(btn,g){
   document.querySelectorAll('.genre-btn').forEach(b=>b.classList.remove('on'));
-  btn.classList.add('on');
-  genre=g;
-  // その他入力欄を閉じる
-  const wrap = document.getElementById('genreOtherWrap');
-  if(wrap) wrap.style.display='none';
+  btn.classList.add('on'); genre=g;
+  const w=document.getElementById('genreOtherWrap');
+  if(w) w.style.display='none';
 }
 function pickGenreOther(btn){
   document.querySelectorAll('.genre-btn').forEach(b=>b.classList.remove('on'));
   btn.classList.add('on');
-  const wrap = document.getElementById('genreOtherWrap');
-  if(wrap) wrap.style.display='block';
-  const inp = document.getElementById('genreOtherInput');
-  if(inp){ inp.focus(); genre = inp.value || 'その他ハンドメイド'; }
+  const w=document.getElementById('genreOtherWrap');
+  if(w) w.style.display='block';
+  const inp=document.getElementById('genreOtherInput');
+  if(inp){ inp.focus(); genre=inp.value||'その他ハンドメイド'; }
 }
-function updateCustomGenre(val){
-  genre = val || 'その他ハンドメイド';
-}
+function updateCustomGenre(val){ genre=val||'その他ハンドメイド'; }
 
-const STEP_HINTS = [
+/* ── タブ ── */
+const STEP_HINTS=[
   'まず①でInstagramプロフィールを整えましょう ✨',
   '次は②で作品の投稿キャプションを作りましょう 📸',
   '③でX・Threadsに拡散！最後は④でスケジュール管理 🚀',
   '④に投稿スケジュールを登録してGoogleカレンダーと連携しましょう 📅'
 ];
-
 function switchTab(i){
   document.querySelectorAll('.tab-nav-btn').forEach((b,idx)=>b.classList.toggle('on',idx===i));
   document.querySelectorAll('.tab-pane').forEach((p,idx)=>p.classList.toggle('on',idx===i));
   [0,1,2,3].forEach(idx=>{
-    const el = document.getElementById('step'+idx);
-    if(!el) return;
+    const el=document.getElementById('step'+idx); if(!el) return;
     el.classList.remove('current','done');
-    if(idx === i) el.classList.add('current');
-    else if(idx < i) el.classList.add('done');
+    if(idx===i) el.classList.add('current');
+    else if(idx<i) el.classList.add('done');
   });
-  const hint = document.getElementById('stepHint');
-  if(hint) hint.textContent = STEP_HINTS[i] || '';
-  if(i === 3) renderCalendar();
+  const hint=document.getElementById('stepHint');
+  if(hint) hint.textContent=STEP_HINTS[i]||'';
+  if(i===3) renderCalendar();
 }
 
-function copyAll(ids, btn){
-  const text = ids.map(id=>{
-    const el = document.getElementById(id);
-    return el ? el.textContent.trim() : '';
-  }).filter(t=>t).join('\n\n─────────────\n\n');
+/* ── コピー ── */
+function copyAll(ids,btn){
+  const text=ids.map(id=>{const el=document.getElementById(id);return el?el.textContent.trim():'';}).filter(t=>t).join('\n\n─────────────\n\n');
   navigator.clipboard.writeText(text).then(()=>{
-    const orig = btn.innerHTML;
-    btn.innerHTML = '✅ まとめてコピーしました！';
-    btn.classList.add('copied');
-    setTimeout(()=>{ btn.innerHTML=orig; btn.classList.remove('copied'); }, 2200);
+    const orig=btn.innerHTML; btn.innerHTML='✅ まとめてコピーしました！'; btn.classList.add('copied');
+    setTimeout(()=>{btn.innerHTML=orig;btn.classList.remove('copied');},2200);
   });
 }
 
+/* ── パネル ── */
 function togglePanel(w){
   const sp=document.getElementById(w+'Panel'),btn=document.getElementById(w+'Btn'),bd=document.getElementById('backdrop');
   const isOpen=sp.classList.contains('open');
-  ['setting','usage'].forEach(n=>{document.getElementById(n+'Panel').classList.remove('open');document.getElementById(n+'Btn').classList.remove('active');});
-  if(!isOpen){sp.classList.add('open');btn.classList.add('active');bd.classList.add('show');}
-  else{bd.classList.remove('show');}
+  ['setting','usage'].forEach(n=>{
+    const p=document.getElementById(n+'Panel'),b=document.getElementById(n+'Btn');
+    if(p) p.classList.remove('open');
+    if(b) b.classList.remove('active');
+  });
+  if(!isOpen){ sp.classList.add('open'); btn.classList.add('active'); bd.classList.add('show'); }
+  else{ bd.classList.remove('show'); }
 }
 function closePanels(){
-  ['setting','usage'].forEach(n=>{document.getElementById(n+'Panel').classList.remove('open');document.getElementById(n+'Btn').classList.remove('active');});
+  ['setting','usage'].forEach(n=>{
+    const p=document.getElementById(n+'Panel'),b=document.getElementById(n+'Btn');
+    if(p) p.classList.remove('open');
+    if(b) b.classList.remove('active');
+  });
   document.getElementById('backdrop').classList.remove('show');
 }
-
 function toggleTips(){
   const b=document.getElementById('tipsBody'),a=document.getElementById('tipsArrow');
+  if(!b) return;
   b.classList.toggle('open'); a.textContent=b.classList.contains('open')?'▲':'▼';
 }
 
+/* ── 試用管理 ── */
 const cnt=()=>parseInt(localStorage.getItem(CNT_K)||'0');
 const isUnlk=()=>localStorage.getItem(UNL_K)==='true';
 
-const STRIPE_URL = 'https://buy.stripe.com/28E00i8qKgzHa519J2cV20G';
-
 function updateBar(){
-  const bar = document.getElementById('trialBar');
-  const msg = document.getElementById('trialMsg');
-  if(!bar || !msg) return;
+  const bar=document.getElementById('trialBar');
+  const msg=document.getElementById('trialMsg');
+  if(!bar||!msg) return;
 
-  if(isUnlk()){
-    bar.style.display = 'none';
-    return;
-  }
+  if(isUnlk()){ bar.style.display='none'; return; }
+  bar.style.display='block';
 
-  bar.style.display = 'block';
-  const used = cnt();
-  const rem  = Math.max(0, MAX - used);
+  const used=cnt();
+  const rem=Math.max(0,MAX-used);
 
-  // クラスリセット
-  bar.className = 'trial-bar';
-
-  if(used === 0){
-    // 未使用
+  bar.className='trial-bar';
+  if(used===0){
     bar.classList.add('state-fresh');
-    msg.innerHTML = '🎁 今なら3回まで無料でお試しいただけます（登録不要）';
-  } else if(rem === 2){
-    // 1回使用後
+    msg.innerHTML='🎁 今なら3回まで無料でお試しいただけます（登録不要）';
+  }else if(rem===2){
     bar.classList.add('state-2');
-    msg.innerHTML = '🎁 無料体験 残り<strong> 2 </strong>回（全3回）';
-  } else if(rem === 1){
-    // 2回使用後
+    msg.innerHTML='🎁 無料体験 残り<strong> 2 </strong>回（全3回）';
+  }else if(rem===1){
     bar.classList.add('state-1');
-    msg.innerHTML = '🎁 無料体験 残り<strong> 1 </strong>回（全3回）';
-  } else {
-    // 終了
+    msg.innerHTML='🎁 無料体験 残り<strong> 1 </strong>回（全3回）';
+  }else{
     bar.classList.add('state-end');
-    msg.innerHTML = '⚠️ 無料体験が終了しました'
-      + '<br><a class="trial-stripe-btn" href="' + STRIPE_URL + '" target="_blank">'
-      + 'ご購入はこちら ¥2,980 →</a>';
+    msg.innerHTML='⚠️ 無料体験が終了しました<br>'
+      +'<a class="trial-stripe-btn" href="'+STRIPE_URL+'" target="_blank">ご購入はこちら ¥2,980 →</a>';
   }
 }
 
 function canGen(){
-  if(isUnlk())return true;
-  if(cnt()<MAX)return true;
+  if(isUnlk()) return true;
+  if(cnt()<MAX) return true;
   document.getElementById('modalOv').classList.add('show');
   return false;
 }
-function addCnt(){localStorage.setItem(CNT_K,cnt()+1);updateBar();}
+function addCnt(){ localStorage.setItem(CNT_K,cnt()+1); updateBar(); }
 
+/* ── パスワード ── */
 function checkPw(){
   const v=document.getElementById('pwInput').value.trim();
-  if(v===PW){localStorage.setItem(UNL_K,'true');document.getElementById('modalOv').classList.remove('show');updateBar();alert('✅ 解除完了！制限なしでご利用いただけます🎀');}
-  else{document.getElementById('pwErr').style.display='block';}
+  if(v===PW){
+    localStorage.setItem(UNL_K,'true');
+    document.getElementById('modalOv').classList.remove('show');
+    updateBar();
+    alert('✅ 解除完了！制限なしでご利用いただけます🎀');
+  }else{
+    document.getElementById('pwErr').style.display='block';
+  }
 }
 
-function cfg(){return{name:document.getElementById('brandName').value||'(ブランド名未設定)',ig:document.getElementById('igAcc').value||'',x:document.getElementById('xAcc').value||'',th:document.getElementById('thAcc').value||'',base:document.getElementById('baseUrl').value||'',genre:genre};}
+/* ── 設定取得 ── */
+function cfg(){
+  return{
+    name:document.getElementById('brandName').value||'(ブランド名未設定)',
+    ig:document.getElementById('igAcc').value||'',
+    x:document.getElementById('xAcc').value||'',
+    th:document.getElementById('thAcc').value||'',
+    base:document.getElementById('baseUrl').value||'',
+    genre:genre
+  };
+}
 
+/* ── Claude API ── */
 async function callAI(prompt){
-  const res=await fetch(WORKER,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:1800,messages:[{role:'user',content:prompt}]})});
+  const res=await fetch(WORKER,{
+    method:'POST',
+    headers:{'Content-Type':'application/json'},
+    body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:2000,messages:[{role:'user',content:prompt}]})
+  });
   const d=await res.json();
-  if(d.error)throw new Error(d.error.message);
+  if(d.error) throw new Error(d.error.message);
   return d.content[0].text;
 }
-function parseJSON(r){return JSON.parse(r.replace(/```json|```/g,'').trim());}
+function parseJSON(r){ return JSON.parse(r.replace(/```json|```/g,'').trim()); }
 
-// ── デモデータ ──
-function showDemoMsg(msg, isError=false){
-  const el = document.getElementById('demoMsg');
-  if(!el) return;
-  el.textContent = msg;
-  el.className = 'demo-msg' + (isError ? ' error' : '');
-  el.style.display = 'block';
-  setTimeout(() => { el.style.display = 'none'; }, 3200);
+/* ── デモデータ ── */
+function showDemoMsg(msg,isError=false){
+  const el=document.getElementById('demoMsg'); if(!el) return;
+  el.textContent=msg;
+  el.className='demo-msg'+(isError?' error':'');
+  el.style.display='block';
+  setTimeout(()=>{el.style.display='none';},3200);
 }
-
-function setVal(id, val){
-  const el = document.getElementById(id);
-  if(el) el.value = val;
-}
+function setVal(id,val){ const el=document.getElementById(id); if(el) el.value=val; }
 
 function loadDemo(){
-  // ── 設定欄 ──
-  setVal('brandName', 'てしごとAkko');
-  setVal('igAcc',     '@te_shigoto_akko');
-  setVal('xAcc',      '@te_shigoto_akko');
-  setVal('thAcc',     '@te_shigoto_akko');
-  setVal('baseUrl',   'https://akko-handmade.base.shop');
-
-  // ── タブ① プロフィール ──
-  setVal('p_appeal',
-    '子育てが落ち着いた頃に出会ったアクセサリー作り。' +
-    '身につけるたびにちょっと気分が上がる、そんな毎日の小さな幸せを届けたくて制作しています。' +
-    '素材選びにこだわり、一点一点ていねいに仕上げています。');
-  setVal('p_works',
-    '天然石を使ったピアス・イヤリング、シルバーチェーンのネックレス');
-
-  // ── タブ② 投稿文 ──
-  setVal('po_name',
-    '天然石ラピスラズリ×シルバーチェーンのロングピアス');
-  setVal('po_detail',
-    '素材：ラピスラズリ（天然石）・シルバー925チェーン　サイズ：全長約6cm　制作時間：約3時間');
-  setVal('po_story',
-    '100個以上の石の中から色と形と質感がいちばん美しいものだけを選びました。' +
-    '揺れるたびに光の角度が変わり、さりげなくでも存在感のあるデザインに仕上げています。' +
-    '普段使いにも、ちょっとしたお出かけにも合わせやすい一点です。');
-  setVal('po_price', '3,800円（税込）');
-
-  // ── タブ③ X/Threads ──
-  setVal('sn_point',
-    '揺れるたびに表情が変わる、天然石ラピスラズリのロングピアス');
-  setVal('sn_igurl',
-    'https://www.instagram.com/te_shigoto_akko/');
-
-  // ── ジャンルをアクセサリーに ──
-  document.querySelectorAll('.genre-btn').forEach(b => b.classList.remove('on'));
-  const firstGenre = document.querySelector('.genre-btn');
-  if(firstGenre) firstGenre.classList.add('on');
-  genre = 'アクセサリー・ピアス';
-
+  setVal('brandName','てしごとAkko');
+  setVal('igAcc','@te_shigoto_akko');
+  setVal('xAcc','@te_shigoto_akko');
+  setVal('thAcc','@te_shigoto_akko');
+  setVal('baseUrl','https://akko-handmade.base.shop');
+  setVal('p_appeal','子育てが落ち着いた頃に出会ったアクセサリー作り。身につけるたびにちょっと気分が上がる、そんな毎日の小さな幸せを届けたくて制作しています。素材選びにこだわり、一点一点ていねいに仕上げています。');
+  setVal('p_works','天然石を使ったピアス・イヤリング、シルバーチェーンのネックレス');
+  setVal('po_name','天然石ラピスラズリ×シルバーチェーンのロングピアス');
+  setVal('po_detail','素材：ラピスラズリ（天然石）・シルバー925チェーン　サイズ：全長約6cm　制作時間：約3時間');
+  setVal('po_story','100個以上の石の中から色と形と質感がいちばん美しいものだけを選びました。揺れるたびに光の角度が変わり、さりげなくでも存在感のあるデザインに仕上げています。普段使いにも、ちょっとしたお出かけにも合わせやすい一点です。');
+  setVal('po_price','3,800円（税込）');
+  setVal('sn_point','揺れるたびに表情が変わる、天然石ラピスラズリのロングピアス');
+  setVal('sn_igurl','https://www.instagram.com/te_shigoto_akko/');
+  document.querySelectorAll('.genre-btn').forEach(b=>b.classList.remove('on'));
+  const first=document.querySelector('.genre-btn'); if(first) first.classList.add('on');
+  genre='アクセサリー・ピアス';
   saveSettings();
-  showDemoMsg('✅ デモデータを入力しました！パネルを閉じてタブ①から「生成する」を押してみてください🎀');
+  showDemoMsg('✅ デモデータを入力しました！パネルを閉じてタブ①から試してください🎀');
 }
-
 function clearDemo(){
-  ['brandName','igAcc','xAcc','thAcc','baseUrl'].forEach(id => {
-    setVal(id, '');
-    localStorage.removeItem('hmm_' + id);
-  });
-  ['p_appeal','p_works','po_name','po_detail','po_story','po_price','sn_point','sn_igurl'].forEach(id => {
-    setVal(id, '');
-  });
+  const ids=['brandName','igAcc','xAcc','thAcc','baseUrl','p_appeal','p_works','po_name','po_detail','po_story','po_price','sn_point','sn_igurl'];
+  ids.forEach(id=>{ setVal(id,''); localStorage.removeItem('hmm_'+id); });
+  // 試用カウントもリセット（デモ用）
+  localStorage.removeItem(CNT_K);
+  localStorage.removeItem(UNL_K);
+  updateBar();
   showDemoMsg('🗑️ すべての入力内容をクリアしました。');
 }
 
-// ══════════════════════════════
-// カレンダー機能
-// ══════════════════════════════
-const CAL_KEY = 'hmm_calendar';
-let calYear, calMonth, calSelectedDate, calSelectedPlatform = 'ig';
+/* ── カレンダー ── */
+const CAL_KEY='hmm_calendar';
+let calYear, calMonth, calSelectedDate, calSelectedPlatform='ig';
+const PL_ICON={ig:'📷',x:'🐦',th:'🧵'};
+const PL_LABEL={ig:'Instagram',x:'X',th:'Threads'};
+const PL_BADGE={ig:'badge-ig',x:'badge-x',th:'badge-th'};
 
-const PL_ICON  = { ig:'📷', x:'🐦', th:'🧵' };
-const PL_LABEL = { ig:'Instagram', x:'X', th:'Threads' };
-const PL_BADGE = { ig:'badge-ig', x:'badge-x', th:'badge-th' };
+function calData(){ try{ return JSON.parse(localStorage.getItem(CAL_KEY)||'{}'); }catch(e){ return {}; } }
+function saveCalData(d){ localStorage.setItem(CAL_KEY,JSON.stringify(d)); }
+function uid(){ return Date.now().toString(36)+Math.random().toString(36).slice(2,7); }
 
-function calData(){
-  try{ return JSON.parse(localStorage.getItem(CAL_KEY) || '{}'); }
-  catch(e){ return {}; }
-}
-function saveCalData(d){ localStorage.setItem(CAL_KEY, JSON.stringify(d)); }
-
-function uid(){
-  return Date.now().toString(36) + Math.random().toString(36).slice(2,7);
-}
-
-function initCalendar(){
-  const now = new Date();
-  calYear  = now.getFullYear();
-  calMonth = now.getMonth();
-}
+function initCalendar(){ const n=new Date(); calYear=n.getFullYear(); calMonth=n.getMonth(); }
 
 function calMove(delta){
-  calMonth += delta;
-  if(calMonth > 11){ calMonth=0; calYear++; }
-  if(calMonth < 0) { calMonth=11; calYear--; }
+  calMonth+=delta;
+  if(calMonth>11){ calMonth=0; calYear++; }
+  if(calMonth<0){ calMonth=11; calYear--; }
   renderCalendar();
 }
 
 function renderCalendar(){
-  const data = calData();
-  const title = document.getElementById('calTitle');
-  if(title) title.textContent = calYear + '年 ' + (calMonth+1) + '月';
-
-  const grid = document.getElementById('calGrid');
-  if(!grid) return;
-
-  // 曜日ヘッダーを残して日付セルだけ再描画
-  const headers = Array.from(grid.querySelectorAll('.cal-dow'));
-  grid.innerHTML = '';
-  headers.forEach(h => grid.appendChild(h));
-
-  const firstDay = new Date(calYear, calMonth, 1).getDay();
-  const lastDate = new Date(calYear, calMonth+1, 0).getDate();
-  const today = new Date();
-
-  // 空白セル
-  for(let i=0; i<firstDay; i++){
-    const blank = document.createElement('div');
-    blank.className = 'cal-day empty';
-    grid.appendChild(blank);
+  const data=calData();
+  const title=document.getElementById('calTitle');
+  if(title) title.textContent=calYear+'年 '+(calMonth+1)+'月';
+  const grid=document.getElementById('calGrid'); if(!grid) return;
+  const headers=Array.from(grid.querySelectorAll('.cal-dow'));
+  grid.innerHTML='';
+  headers.forEach(h=>grid.appendChild(h));
+  const firstDay=new Date(calYear,calMonth,1).getDay();
+  const lastDate=new Date(calYear,calMonth+1,0).getDate();
+  const today=new Date();
+  for(let i=0;i<firstDay;i++){
+    const b=document.createElement('div'); b.className='cal-day empty'; grid.appendChild(b);
   }
-
-  for(let d=1; d<=lastDate; d++){
-    const key = calYear + '-' + String(calMonth+1).padStart(2,'0') + '-' + String(d).padStart(2,'0');
-    const posts = data[key] || [];
-    const isToday = today.getFullYear()===calYear && today.getMonth()===calMonth && today.getDate()===d;
-
-    const cell = document.createElement('div');
-    cell.className = 'cal-day' + (isToday?' today':'') + (posts.length?' has-post':'');
-    cell.onclick = () => openCalModal(key);
-
-    const num = document.createElement('span');
-    num.className = 'cal-day-num';
-    num.textContent = d;
+  for(let d=1;d<=lastDate;d++){
+    const key=calYear+'-'+String(calMonth+1).padStart(2,'0')+'-'+String(d).padStart(2,'0');
+    const posts=data[key]||[];
+    const isToday=today.getFullYear()===calYear&&today.getMonth()===calMonth&&today.getDate()===d;
+    const cell=document.createElement('div');
+    cell.className='cal-day'+(isToday?' today':'')+(posts.length?' has-post':'');
+    cell.onclick=()=>openCalModal(key);
+    const num=document.createElement('span'); num.className='cal-day-num'; num.textContent=d;
     cell.appendChild(num);
-
     if(posts.length){
-      const marks = document.createElement('div');
-      marks.className = 'cal-day-marks';
-      posts.forEach(p => {
-        const m = document.createElement('span');
-        m.className = 'cal-mark';
-        m.textContent = PL_ICON[p.platform] || '📌';
-        marks.appendChild(m);
-      });
+      const marks=document.createElement('div'); marks.className='cal-day-marks';
+      posts.forEach(p=>{ const m=document.createElement('span'); m.className='cal-mark'; m.textContent=PL_ICON[p.platform]||'📌'; marks.appendChild(m); });
       cell.appendChild(marks);
     }
     grid.appendChild(cell);
   }
-
   renderPostList();
 }
 
 function renderPostList(){
-  const data = calData();
-  const list = document.getElementById('postList');
-  if(!list) return;
-
-  // 今月の投稿だけ表示・日付順
-  const prefix = calYear + '-' + String(calMonth+1).padStart(2,'0') + '-';
-  const entries = [];
-  Object.entries(data).forEach(([date, posts]) => {
-    if(date.startsWith(prefix)){
-      posts.forEach(p => entries.push({date, ...p}));
-    }
-  });
-  entries.sort((a,b) => a.date.localeCompare(b.date));
-
+  const data=calData();
+  const list=document.getElementById('postList'); if(!list) return;
+  const prefix=calYear+'-'+String(calMonth+1).padStart(2,'0')+'-';
+  const entries=[];
+  Object.entries(data).forEach(([date,posts])=>{ if(date.startsWith(prefix)) posts.forEach(p=>entries.push({date,...p})); });
+  entries.sort((a,b)=>a.date.localeCompare(b.date));
   if(!entries.length){
-    list.innerHTML = '<div class="cal-empty-msg">📅 この月の登録はまだありません。<br>カレンダーの日付をクリックして<br>投稿スケジュールを登録してみましょう！</div>';
+    list.innerHTML='<div class="cal-empty-msg">📅 この月の登録はまだありません。<br>カレンダーの日付をクリックして投稿を登録しましょう！</div>';
     return;
   }
-
-  list.innerHTML = '';
-  entries.forEach(p => {
-    const parts = p.date.split('-');
-    const label = parts[1] + '/' + parts[2];
-    const card = document.createElement('div');
-    card.className = 'post-card';
-    card.innerHTML = [
-      '<div class="post-card-head">',
-        '<span class="post-platform-badge ' + PL_BADGE[p.platform] + '">' + PL_ICON[p.platform] + ' ' + PL_LABEL[p.platform] + '</span>',
-        '<span class="post-date-label">' + label + '</span>',
-      '</div>',
-      '<div class="post-title">' + (p.title || '（タイトルなし）') + '</div>',
-      '<div class="post-preview">' + (p.content || '').replace(/</g,'&lt;').slice(0,80) + '</div>',
-      '<div class="post-card-btns">',
-        '<button class="post-card-btn gcal" onclick="openGCalDirect(\''+p.date+'\',\''+encodeURIComponent(p.title||'')+'\',' +
-          '\''+encodeURIComponent((p.content||'').slice(0,200))+'\')">📆 Gカレンダー</button>',
-        '<button class="post-card-btn edit" onclick="editPost(\''+p.date+'\',\''+p.id+'\')">✏️ 編集</button>',
-        '<button class="post-card-btn del"  onclick="deletePost(\''+p.date+'\',\''+p.id+'\')">🗑️ 削除</button>',
-      '</div>'
-    ].join('');
+  list.innerHTML='';
+  entries.forEach(p=>{
+    const parts=p.date.split('-');
+    const label=parts[1]+'/'+parts[2];
+    const card=document.createElement('div');
+    card.className='post-card';
+    const safeTitle=(p.title||'').replace(/'/g,'&#39;').replace(/"/g,'&quot;');
+    const safeContent=(p.content||'').slice(0,200).replace(/'/g,'&#39;').replace(/"/g,'&quot;');
+    const preview=(p.content||'').replace(/</g,'&lt;').slice(0,80);
+    card.innerHTML=
+      '<div class="post-card-head">'
+      +'<span class="post-platform-badge '+PL_BADGE[p.platform]+'">'+PL_ICON[p.platform]+' '+PL_LABEL[p.platform]+'</span>'
+      +'<span class="post-date-label">'+label+'</span>'
+      +'</div>'
+      +'<div class="post-title">'+(p.title||'（タイトルなし）')+'</div>'
+      +'<div class="post-preview">'+preview+'</div>'
+      +'<div class="post-card-btns">'
+      +'<button class="post-card-btn gcal" onclick="openGCalDirect(\''+p.date+'\',\''+safeTitle+'\',\''+safeContent+'\')">📆 Gカレンダー</button>'
+      +'<button class="post-card-btn edit" onclick="editPost(\''+p.date+'\',\''+p.id+'\')">✏️ 編集</button>'
+      +'<button class="post-card-btn del" onclick="deletePost(\''+p.date+'\',\''+p.id+'\')">🗑️ 削除</button>'
+      +'</div>';
     list.appendChild(card);
   });
 }
 
 function openCalModal(dateKey){
-  calSelectedDate = dateKey;
-  document.getElementById('editPostId').value = '';
-  document.getElementById('calPostTitle').value = '';
-  document.getElementById('calPostContent').value = '';
+  calSelectedDate=dateKey;
+  setVal('editPostId',''); setVal('calPostTitle',''); setVal('calPostContent','');
   selectPlatform('ig');
-
-  const parts = dateKey.split('-');
-  document.getElementById('calModalDate').textContent = '📅 ' + parts[0] + '年' + parts[1] + '月' + parts[2] + '日';
+  const parts=dateKey.split('-');
+  const t=document.getElementById('calModalDate');
+  if(t) t.textContent='📅 '+parts[0]+'年'+parts[1]+'月'+parts[2]+'日';
   document.getElementById('calModalOv').classList.add('show');
 }
-
-function closeCalModal(){
-  document.getElementById('calModalOv').classList.remove('show');
-}
-
+function closeCalModal(){ document.getElementById('calModalOv').classList.remove('show'); }
 function selectPlatform(pl){
-  calSelectedPlatform = pl;
-  ['ig','x','th'].forEach(p => {
-    const btn = document.getElementById('plBtn-' + p);
-    if(!btn) return;
-    btn.classList.remove('on');
-  });
-  const active = document.getElementById('plBtn-' + pl);
-  if(active) active.classList.add('on');
+  calSelectedPlatform=pl;
+  ['ig','x','th'].forEach(p=>{ const b=document.getElementById('plBtn-'+p); if(b) b.classList.remove('on'); });
+  const a=document.getElementById('plBtn-'+pl); if(a) a.classList.add('on');
 }
-
 function savePost(){
-  const title   = document.getElementById('calPostTitle').value.trim();
-  const content = document.getElementById('calPostContent').value.trim();
-  const editId  = document.getElementById('editPostId').value;
-  if(!title && !content){ alert('タイトルまたは投稿内容を入力してください'); return; }
-
-  const data = calData();
-  if(!data[calSelectedDate]) data[calSelectedDate] = [];
-
+  const title=(document.getElementById('calPostTitle').value||'').trim();
+  const content=(document.getElementById('calPostContent').value||'').trim();
+  const editId=document.getElementById('editPostId').value;
+  if(!title&&!content){ alert('タイトルまたは投稿内容を入力してください'); return; }
+  const data=calData();
+  if(!data[calSelectedDate]) data[calSelectedDate]=[];
   if(editId){
-    // 編集
-    const idx = data[calSelectedDate].findIndex(p => p.id === editId);
-    if(idx >= 0){
-      data[calSelectedDate][idx] = { id:editId, platform:calSelectedPlatform, title, content };
-    }
-  } else {
-    // 新規
-    data[calSelectedDate].push({ id:uid(), platform:calSelectedPlatform, title, content });
+    const idx=data[calSelectedDate].findIndex(p=>p.id===editId);
+    if(idx>=0) data[calSelectedDate][idx]={id:editId,platform:calSelectedPlatform,title,content};
+  }else{
+    data[calSelectedDate].push({id:uid(),platform:calSelectedPlatform,title,content});
   }
-
-  saveCalData(data);
-  closeCalModal();
-  renderCalendar();
+  saveCalData(data); closeCalModal(); renderCalendar();
 }
-
-function editPost(dateKey, postId){
-  const data  = calData();
-  const posts = data[dateKey] || [];
-  const post  = posts.find(p => p.id === postId);
+function editPost(dateKey,postId){
+  const data=calData(); const posts=data[dateKey]||[]; const post=posts.find(p=>p.id===postId);
   if(!post) return;
-
-  calSelectedDate = dateKey;
-  document.getElementById('editPostId').value   = postId;
-  document.getElementById('calPostTitle').value   = post.title || '';
-  document.getElementById('calPostContent').value = post.content || '';
-  selectPlatform(post.platform || 'ig');
-
-  const parts = dateKey.split('-');
-  document.getElementById('calModalDate').textContent = '✏️ ' + parts[0] + '年' + parts[1] + '月' + parts[2] + '日（編集）';
+  calSelectedDate=dateKey;
+  setVal('editPostId',postId); setVal('calPostTitle',post.title||''); setVal('calPostContent',post.content||'');
+  selectPlatform(post.platform||'ig');
+  const parts=dateKey.split('-');
+  const t=document.getElementById('calModalDate');
+  if(t) t.textContent='✏️ '+parts[0]+'年'+parts[1]+'月'+parts[2]+'日（編集）';
   document.getElementById('calModalOv').classList.add('show');
 }
-
-function deletePost(dateKey, postId){
+function deletePost(dateKey,postId){
   if(!confirm('この投稿を削除してよいですか？')) return;
-  const data  = calData();
-  if(data[dateKey]){
-    data[dateKey] = data[dateKey].filter(p => p.id !== postId);
-    if(!data[dateKey].length) delete data[dateKey];
-  }
-  saveCalData(data);
-  renderCalendar();
+  const data=calData();
+  if(data[dateKey]){ data[dateKey]=data[dateKey].filter(p=>p.id!==postId); if(!data[dateKey].length) delete data[dateKey]; }
+  saveCalData(data); renderCalendar();
 }
-
 function openGCal(){
-  const title   = document.getElementById('calPostTitle').value.trim() || '投稿予定';
-  const content = document.getElementById('calPostContent').value.trim();
-  const date    = (calSelectedDate || '').replace(/-/g,'');
+  const title=(document.getElementById('calPostTitle').value||'').trim()||'投稿予定';
+  const content=(document.getElementById('calPostContent').value||'').trim();
+  const date=(calSelectedDate||'').replace(/-/g,'');
   if(!date){ alert('日付が選択されていません'); return; }
-  const url = 'https://calendar.google.com/calendar/render?action=TEMPLATE'
-    + '&text=' + encodeURIComponent('[' + PL_LABEL[calSelectedPlatform] + '] ' + title)
-    + '&dates=' + date + 'T090000/' + date + 'T093000'
-    + '&details=' + encodeURIComponent(content);
-  window.open(url, '_blank');
+  window.open('https://calendar.google.com/calendar/render?action=TEMPLATE&text='+encodeURIComponent('['+PL_LABEL[calSelectedPlatform]+'] '+title)+'&dates='+date+'T090000/'+date+'T093000&details='+encodeURIComponent(content),'_blank');
+}
+function openGCalDirect(dateKey,title,content){
+  const date=dateKey.replace(/-/g,'');
+  window.open('https://calendar.google.com/calendar/render?action=TEMPLATE&text='+encodeURIComponent(title)+'&dates='+date+'T090000/'+date+'T093000&details='+encodeURIComponent(content),'_blank');
 }
 
-function openGCalDirect(dateKey, titleEnc, contentEnc){
-  const date = dateKey.replace(/-/g,'');
-  const title   = decodeURIComponent(titleEnc);
-  const content = decodeURIComponent(contentEnc);
-  const url = 'https://calendar.google.com/calendar/render?action=TEMPLATE'
-    + '&text=' + encodeURIComponent(title)
-    + '&dates=' + date + 'T090000/' + date + 'T093000'
-    + '&details=' + encodeURIComponent(content);
-  window.open(url, '_blank');
-}
-
+/* ── タブ① プロフィール生成 ── */
 async function genProfile(){
-  if(!canGen())return;
-  const s=cfg(),appeal=document.getElementById('p_appeal').value,works=document.getElementById('p_works').value;
-  if(!appeal){alert('想い・こだわりを入力してください');return;}
-  show('load0');hide('out0');
+  if(!canGen()) return;
+  const s=cfg();
+  const appeal=document.getElementById('p_appeal').value;
+  const works=document.getElementById('p_works').value;
+  if(!appeal){ alert('想い・こだわりを入力してください'); return; }
+  show('load0'); hide('out0');
   const p=`あなたはハンドメイド作家のInstagram・BASEブランディング専門家です。以下の情報でプロフィール文セットを作成してください。投稿者は女性ハンドメイド作家です。
 
 作家名：${s.name}
@@ -1735,30 +1638,35 @@ BASEショップURL：${s.base}
 
 以下のJSONのみ返答（前後にテキスト不要）：
 {
-  "accountNames": "Instagramアカウント名の提案3案。\n【強い】@提案名：選ぶ理由一言\n【魅力的】@提案名：選ぶ理由一言\n【わかりやすい】@提案名：選ぶ理由一言\nの形式で。英字・数字・アンダーバーのみ使用。",
+  "accountNames": "Instagramアカウント名の提案3案。\\n【強い】@提案名：選ぶ理由一言\\n【魅力的】@提案名：選ぶ理由一言\\n【わかりやすい】@提案名：選ぶ理由一言\\nの形式で。英字・数字・アンダーバーのみ使用。",
   "profile": "140字以内のInstagramプロフィール文。女性らしい温かみある文体。購買意欲を自然に高める。BASEへの誘導を含める。絵文字を適度に使う。",
   "highlights": "ハイライト見出し案5つを改行区切りで。絵文字付き。",
   "linkText": "ストーリーズでBASEリンクをプロフィールに誘導する文章。2〜3行。絵文字あり。女性らしい温かみある文体。",
-  "baseShopProfile": "BASEショップのTOP紹介文。200〜300字。【構成】①作家の自己紹介と想い（2〜3行）②得意なジャンル・作品の特徴（1〜2行）③手作りへのこだわり（1〜2行）④最後にお客様へのメッセージ（1行）。絵文字を適度に使い、温かみと誠実さが伝わる文体で。"
+  "baseShopProfile": "BASEショップのTOP紹介文。200〜300字。作家の自己紹介と想い・得意なジャンル・こだわり・お客様へのメッセージ。絵文字を適度に使い、温かみと誠実さが伝わる文体で。"
 }`;
   try{
     const j=parseJSON(await callAI(p));
-    document.getElementById('o_acct').textContent=j.accountNames;
-    document.getElementById('o_prof').textContent=j.profile;
-    document.getElementById('o_hl').textContent=j.highlights;
-    document.getElementById('o_link').textContent=j.linkText;
+    document.getElementById('o_acct').textContent=j.accountNames||'';
+    document.getElementById('o_prof').textContent=j.profile||'';
+    document.getElementById('o_hl').textContent=j.highlights||'';
+    document.getElementById('o_link').textContent=j.linkText||'';
     document.getElementById('o_base_prof').textContent=j.baseShopProfile||'';
-    show('out0');addCnt();
-  }
-  catch(e){alert('生成に失敗しました。もう一度お試しください。\n'+e.message);}
-  finally{hide('load0');}
+    show('out0'); addCnt();
+  }catch(e){ alert('生成に失敗しました。もう一度お試しください。\n'+e.message); }
+  finally{ hide('load0'); }
 }
+
+/* ── タブ② 投稿文生成 ── */
 async function genPost(){
-  if(!canGen())return;
-  const s=cfg(),name=document.getElementById('po_name').value,detail=document.getElementById('po_detail').value,story=document.getElementById('po_story').value,price=document.getElementById('po_price').value;
-  if(!name){alert('作品名を入力してください');return;}
-  show('load1');hide('out1');
-  const p=`あなたは女性ハンドメイド作家を専門に支援するInstagramライター兼BASEショップ運営アドバイザーです。見た人が「欲しい」「買いたい」と感じるInstagram投稿コンテンツと、BASEの商品登録用コンテンツを同時に作成してください。
+  if(!canGen()) return;
+  const s=cfg();
+  const name=document.getElementById('po_name').value;
+  const detail=document.getElementById('po_detail').value;
+  const story=document.getElementById('po_story').value;
+  const price=document.getElementById('po_price').value;
+  if(!name){ alert('作品名を入力してください'); return; }
+  show('load1'); hide('out1');
+  const p=`あなたは女性ハンドメイド作家を専門に支援するInstagramライター兼BASEショップ運営アドバイザーです。見た人が「欲しい」「買いたい」と感じるInstagram投稿コンテンツとBASE商品登録用コンテンツを同時に作成してください。
 
 作家名：${s.name}
 ジャンル：${s.genre}
@@ -1775,9 +1683,9 @@ Instagramアカウント：${s.ig}
 {
   "caption": "Instagram投稿キャプション全文。①作品を手にしたときのシーン・気持ちの描写（2〜3行・絵文字あり）②こだわりポイント・制作秘話（2〜3行・絵文字あり）③この作品が似合う人・シーンの提案（1〜2行）④購入への背中を押す一文＋BASEへの誘導（1〜2行）⑤改行してハッシュタグ7個をスペース区切り横並びで",
   "storyText": "ストーリーズ用テキスト。2行以内。絵文字あり。作品の魅力を一言で伝えプロフィールのリンクから購入できますという誘導を入れる。女性らしいやわらかな文体。",
-  "baseTitle": "BASE商品タイトル。30字前後。検索されやすいキーワード（素材・ジャンル・特徴）を自然に盛り込む。【一点物】などの訴求ワードも入れる。",
-  "baseDesc": "BASE商品説明文。①この作品の世界観・魅力（2〜3行）②素材・サイズ・重さなどのスペック（箇条書き）③制作へのこだわり（2行）④お手入れ・取り扱い注意事項（1〜2行）⑤配送・ラッピングについて一言。全体300〜400字。絵文字を適度に使う。",
-  "basePrice": "価格・送料の案内テキスト。価格の表示・送料についての案内・ラッピング対応などを3〜4行で。"
+  "baseTitle": "BASE商品タイトル。30字前後。検索されやすいキーワードを自然に盛り込む。【一点物】などの訴求ワードも入れる。",
+  "baseDesc": "BASE商品説明文。①この作品の世界観・魅力（2〜3行）②素材・サイズ等のスペック（箇条書き）③制作へのこだわり（2行）④お手入れ・注意事項（1〜2行）⑤配送・ラッピングについて一言。全体300〜400字。絵文字を適度に使う。",
+  "basePrice": "価格・送料の案内テキスト。価格表示・送料案内・ラッピング対応などを3〜4行で。"
 }`;
   try{
     const j=parseJSON(await callAI(p));
@@ -1786,58 +1694,72 @@ Instagramアカウント：${s.ig}
     document.getElementById('o_base_title').textContent=j.baseTitle||'';
     document.getElementById('o_base_desc').textContent=j.baseDesc||'';
     document.getElementById('o_base_price').textContent=j.basePrice||'';
-    show('out1');addCnt();
-  }
-  catch(e){alert('生成に失敗しました。もう一度お試しください。\n'+e.message);}
-  finally{hide('load1');}
-}
-async function genSNS(){
-  if(!canGen())return;
-  const s=cfg(),point=document.getElementById('sn_point').value,igurl=document.getElementById('sn_igurl').value;
-  if(!point){alert('作品のポイントを入力してください');return;}
-  show('load2');hide('out2');
-  const p=`あなたはハンドメイド作家のSNS集客専門家です。以下の情報でXとThreadsの集客投稿文を作成してください。
-作家名：${s.name} ジャンル：${s.genre} 作品のポイント：${point} InstagramのURL：${igurl||'（Instagramアカウント：'+s.ig+'）'} BASEショップURL：${s.base}
-以下のJSONのみ返答：{"xPost":"X用投稿文。140字以内厳守。作品の魅力を端的に伝えInstagramへ誘導するURLを含める。ハッシュタグ2〜3個。","threadsPost":"Threads用投稿文。250字程度。温かみある語り口。作品への想いや制作の話を盛り込む。絵文字を使う。最後にBASEかInstagramへの誘導。"}`;
-  try{const j=parseJSON(await callAI(p));document.getElementById('o_x').textContent=j.xPost;document.getElementById('o_th').textContent=j.threadsPost;show('out2');addCnt();}
-  catch(e){alert('生成に失敗しました。もう一度お試しください。\n'+e.message);}
-  finally{hide('load2');}
+    show('out1'); addCnt();
+  }catch(e){ alert('生成に失敗しました。もう一度お試しください。\n'+e.message); }
+  finally{ hide('load1'); }
 }
 
+/* ── タブ③ X/Threads生成 ── */
+async function genSNS(){
+  if(!canGen()) return;
+  const s=cfg();
+  const point=document.getElementById('sn_point').value;
+  const igurl=document.getElementById('sn_igurl').value;
+  if(!point){ alert('作品のポイントを入力してください'); return; }
+  show('load2'); hide('out2');
+  const p=`あなたはハンドメイド作家のSNS集客専門家です。以下の情報でXとThreadsの集客投稿文を作成してください。
+
+作家名：${s.name}
+ジャンル：${s.genre}
+作品のポイント：${point}
+InstagramのURL：${igurl||'（Instagramアカウント：'+s.ig+'）'}
+BASEショップURL：${s.base}
+
+以下のJSONのみ返答：
+{
+  "xPost": "X用投稿文。140字以内厳守。作品の魅力を端的に伝えInstagramへ誘導するURLを含める。ハッシュタグ2〜3個。",
+  "threadsPost": "Threads用投稿文。250字程度。温かみある語り口。作品への想いや制作の話を盛り込む。絵文字を使う。最後にBASEかInstagramへの誘導。"
+}`;
+  try{
+    const j=parseJSON(await callAI(p));
+    document.getElementById('o_x').textContent=j.xPost||'';
+    document.getElementById('o_th').textContent=j.threadsPost||'';
+    show('out2'); addCnt();
+  }catch(e){ alert('生成に失敗しました。もう一度お試しください。\n'+e.message); }
+  finally{ hide('load2'); }
+}
+
+/* ── コピー ── */
 function copyEl(id,btn){
-  navigator.clipboard.writeText(document.getElementById(id).textContent).then(()=>{
+  const el=document.getElementById(id); if(!el) return;
+  navigator.clipboard.writeText(el.textContent).then(()=>{
     const o=btn.innerHTML; btn.innerHTML='✅ コピーしました！'; btn.classList.add('copied');
-    setTimeout(()=>{btn.innerHTML=o;btn.classList.remove('copied');},2000);
+    setTimeout(()=>{ btn.innerHTML=o; btn.classList.remove('copied'); },2000);
   });
 }
 
-function show(id){
-  const el=document.getElementById(id);
-  if(!el) return;
-  el.style.display='block';
-}
-function hide(id){
-  const el=document.getElementById(id);
-  if(el) el.style.display='none';
-}
+/* ── utils ── */
+function show(id){ const el=document.getElementById(id); if(el) el.style.display='block'; }
+function hide(id){ const el=document.getElementById(id); if(el) el.style.display='none'; }
 
+/* ── 設定保存・復元 ── */
 const FIELDS=['brandName','igAcc','xAcc','thAcc','baseUrl'];
-function saveSettings(){FIELDS.forEach(id=>localStorage.setItem('hmm_'+id,document.getElementById(id).value));}
+function saveSettings(){ FIELDS.forEach(id=>{ const el=document.getElementById(id); if(el) localStorage.setItem('hmm_'+id,el.value); }); }
 function loadSettings(){
-  FIELDS.forEach(id=>{const v=localStorage.getItem('hmm_'+id);if(v)document.getElementById(id).value=v;});
+  FIELDS.forEach(id=>{ const v=localStorage.getItem('hmm_'+id); const el=document.getElementById(id); if(v&&el) el.value=v; });
   setTheme(localStorage.getItem(THM_K)||'ig');
 }
 
+/* ── 初期化 ── */
 document.addEventListener('DOMContentLoaded',()=>{
-  loadSettings(); updateBar();
-  FIELDS.forEach(id=>document.getElementById(id).addEventListener('input',saveSettings));
-  document.getElementById('pwInput').addEventListener('keydown',e=>{if(e.key==='Enter')checkPw();});
-  // カレンダー初期化
+  loadSettings();
+  updateBar();
+  FIELDS.forEach(id=>{ const el=document.getElementById(id); if(el) el.addEventListener('input',saveSettings); });
+  const pw=document.getElementById('pwInput');
+  if(pw) pw.addEventListener('keydown',e=>{ if(e.key==='Enter') checkPw(); });
   initCalendar();
-  // カレンダーモーダル背景クリックで閉じる
-  document.getElementById('calModalOv').addEventListener('click', e=>{
-    if(e.target.id==='calModalOv') closeCalModal();
-  });
+  const calOv=document.getElementById('calModalOv');
+  if(calOv) calOv.addEventListener('click',e=>{ if(e.target.id==='calModalOv') closeCalModal(); });
 });
 </script>
 </body>
