@@ -2,798 +2,1004 @@
 <html lang="ja">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>ハンドメイドみっけ｜Instagram×BASE 販売サポートアプリ</title>
-
-<!-- Favicon -->
 <link rel="icon" type="image/png" href="https://spc-jp.github.io/hand-mikke/favicon.png">
 <link rel="apple-touch-icon" href="https://spc-jp.github.io/hand-mikke/favicon.png">
-
-<!-- OGP -->
 <meta property="og:title" content="ハンドメイドみっけ｜Instagram×BASE 販売サポートアプリ">
-<meta property="og:description" content="作るのは得意。売るのはAIにまかせよう。プロフィール・投稿文・ハッシュタグ・BASE商品登録文を一発生成。">
+<meta property="og:description" content="作るのは得意。売るのはAIにまかせよう。">
 <meta property="og:image" content="https://spc-jp.github.io/hand-mikke/ogp.png">
 <meta property="og:url" content="https://spc-jp.github.io/hand-mikke/">
 <meta property="og:type" content="website">
-<meta property="og:site_name" content="ハンドメイドみっけ">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:title" content="ハンドメイドみっけ｜Instagram×BASE 販売サポートアプリ">
-<meta name="twitter:description" content="作るのは得意。売るのはAIにまかせよう。プロフィール・投稿文・ハッシュタグ・BASE商品登録文を一発生成。">
 <meta name="twitter:image" content="https://spc-jp.github.io/hand-mikke/ogp.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@400;500;700&family=Noto+Sans+JP:wght@400;500;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&display=swap" rel="stylesheet">
 <style>
+/* ═══════════════════════════════════════
+   DESIGN TOKENS
+═══════════════════════════════════════ */
 :root {
-  --p:      #C13584;
-  --p-light:#FDF0F8;
-  --p-dark: #833AB4;
-  --p-accent:#F5B8D8;
-  --p-grad: linear-gradient(135deg,#833AB4 0%,#C13584 40%,#E1306C 70%,#F77737 100%);
-  --ig-grad: linear-gradient(135deg,#833AB4 0%,#C13584 40%,#E1306C 70%,#F77737 100%);
-  --card-shadow: 0 4px 24px rgba(193,53,132,0.10);
-  --radius: 18px;
-  --font-main: 'Noto Sans JP', sans-serif;
-  --font-head: 'Zen Maru Gothic', sans-serif;
-}
-* { box-sizing:border-box; margin:0; padding:0; }
-body { font-family:var(--font-main); background:#FBF7FA; color:#3a2030; min-height:100vh; font-size:14px; line-height:1.7; padding-top:162px; }
+  --bg:       #FAFAFA;
+  --card:     #FFFFFF;
+  --t1:       #262626;
+  --t2:       #8E8E8E;
+  --border:   #DBDBDB;
+  --active:   #C13584;
 
-/* ── HEADER（固定） ── */
-.app-header {
-  background: var(--ig-grad);
-  padding: 0 16px;
+  --ig: linear-gradient(135deg, #833AB4, #C13584, #E1306C, #F77737, #FCAF45);
+  --ig-btn: linear-gradient(90deg, #833AB4, #E1306C, #F77737);
+
+  --top-h:    56px;
+  --bot-h:    64px;
+  --r:        16px;
+  --font:     'Noto Sans JP', sans-serif;
+}
+
+/* ═══════════════════════════════════════
+   RESET / BASE
+═══════════════════════════════════════ */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+html { font-size: 15px; }
+body {
+  font-family: var(--font);
+  background: var(--bg);
+  color: var(--t1);
+  min-height: 100vh;
+  padding-top: var(--top-h);
+  padding-bottom: calc(var(--bot-h) + env(safe-area-inset-bottom));
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ═══════════════════════════════════════
+   TOP BAR
+═══════════════════════════════════════ */
+.top-bar {
   position: fixed;
   top: 0; left: 0; right: 0;
+  height: var(--top-h);
+  background: #fff;
+  border-bottom: 1px solid var(--border);
   z-index: 600;
+  display: flex;
+  align-items: center;
+  padding: 0 14px;
+  gap: 10px;
+}
+
+/* グラデーションロゴアイコン */
+.brand-icon {
+  width: 34px; height: 34px;
+  border-radius: 10px;
+  background: var(--ig);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 1.15em;
+  flex-shrink: 0;
+}
+
+.brand-text {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 1px;
+  min-width: 0;
+}
+.brand-name {
+  font-weight: 700;
+  font-size: 0.92em;
+  color: var(--t1);
+  letter-spacing: -0.01em;
+  white-space: nowrap;
   overflow: hidden;
-  box-shadow: 0 2px 16px rgba(0,0,0,0.18);
+  text-overflow: ellipsis;
 }
-.app-header::before {
-  content:''; position:absolute; top:-50px; right:-50px;
-  width:200px; height:200px; border-radius:50%;
-  background:rgba(255,255,255,0.07); pointer-events:none;
-}
-.app-header::after {
-  content:''; position:absolute; bottom:5px; left:-40px;
-  width:140px; height:140px; border-radius:50%;
-  background:rgba(255,255,255,0.05); pointer-events:none;
+.brand-sub {
+  font-size: 0.66em;
+  color: var(--t2);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  letter-spacing: 0.01em;
 }
 
-/* タイトル左 ／ ボタン群右 */
-.header-top {
-  display:flex; align-items:center; justify-content:space-between;
-  position:relative; z-index:2; max-width:960px; margin:0 auto;
-  padding: 14px 0 0;
+.top-actions { display: flex; gap: 4px; }
+
+.icon-btn {
+  width: 38px; height: 38px;
+  border-radius: 50%;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  font-size: 1.2em;
+  display: flex; align-items: center; justify-content: center;
+  transition: background 0.18s;
+  color: var(--t1);
+}
+.icon-btn:active { background: #F0F0F0; }
+.icon-btn.active {
+  background: linear-gradient(135deg, #F9E8FF, #FFE8F5);
 }
 
-.header-left { display:flex; flex-direction:column; justify-content:center; }
-.header-title { font-family:var(--font-head); font-size:1.45em; color:#fff; letter-spacing:0.05em; text-shadow:0 2px 8px rgba(0,0,0,0.2); }
-.header-sub { font-size:0.74em; color:rgba(255,255,255,0.85); margin-top:1px; }
-
-/* ボタン2つ右横並び */
-.hdr-btns { display:flex; gap:8px; align-items:center; }
-
-.hdr-btn {
-  display:flex; flex-direction:column; align-items:center; gap:3px;
-  background:rgba(255,255,255,0.18); border:1.5px solid rgba(255,255,255,0.4);
-  border-radius:14px; padding:8px 14px; color:#fff;
-  font-family:var(--font-main); font-size:0.72em; font-weight:700;
-  cursor:pointer; transition:all 0.2s; min-width:72px; letter-spacing:0.02em;
-}
-.hdr-btn:hover { background:rgba(255,255,255,0.28); transform:translateY(-1px); }
-.hdr-btn.active { background:rgba(255,255,255,0.36); border-color:rgba(255,255,255,0.85); box-shadow:0 2px 12px rgba(0,0,0,0.15); }
-.hdr-btn-icon { font-size:1.4em; line-height:1; }
-
-/* テーマドット（設定パネル内に移動） */
-.theme-row {
-  display:flex; gap:10px; align-items:center;
-  margin-bottom:16px;
-}
-.theme-dot {
-  width:30px; height:30px; border-radius:50%;
-  border:2.5px solid #e0c8d8; cursor:pointer;
-  transition:transform 0.18s, border-color 0.18s;
-  flex-shrink:0;
-}
-.theme-dot:hover { transform:scale(1.18); }
-.theme-dot.on { border-color:var(--p); transform:scale(1.22); box-shadow:0 0 0 3px var(--p-accent); }
-.theme-dot.t-ig     { background:linear-gradient(135deg,#833AB4,#E1306C,#F77737); }
-.theme-dot.t-pink   { background:linear-gradient(135deg,#E8608A,#C04070); }
-.theme-dot.t-blue   { background:linear-gradient(135deg,#4A90D9,#2260B0); }
-.theme-dot.t-green  { background:linear-gradient(135deg,#48B87A,#2E8A58); }
-.theme-dot.t-yellow { background:linear-gradient(135deg,#F9B234,#E08020); }
-
-.tab-nav { display:flex; background:rgba(0,0,0,0.18); margin-top:14px; }
-.tab-nav-btn {
-  flex:1; padding:10px 4px; border:none; background:transparent;
-  color:rgba(255,255,255,0.72); font-family:var(--font-main);
-  font-size:0.78em; font-weight:700; cursor:pointer;
-  border-bottom:3px solid transparent; transition:all 0.2s;
-}
-.tab-nav-btn.on { color:#fff; background:rgba(255,255,255,0.12); border-bottom-color:#fff; }
-
-/* ── SLIDE PANELS ── */
-.slide-panel {
-  position:fixed; top:0; right:-420px; width:380px; max-width:95vw;
-  height:100vh; background:#fff; box-shadow:-4px 0 30px rgba(0,0,0,0.18);
-  z-index:500; transition:right 0.32s cubic-bezier(0.4,0,0.2,1);
-  overflow-y:auto; padding:170px 22px 40px;
-}
-.slide-panel.open { right:0; }
-.panel-backdrop {
-  display:none; position:fixed; inset:0;
-  background:rgba(40,10,30,0.45); z-index:499; backdrop-filter:blur(2px);
-}
-.panel-backdrop.show { display:block; }
-
-.sp-header {
-  display:flex; justify-content:space-between; align-items:center;
-  margin-bottom:20px; padding-bottom:14px;
-  border-bottom:2px solid var(--p-light);
-}
-.sp-title { font-family:var(--font-head); font-size:1.05em; font-weight:700; color:var(--p); }
-.sp-close {
-  background:var(--p-light); border:none; border-radius:50%;
-  width:34px; height:34px; font-size:1.1em; cursor:pointer;
-  color:var(--p-dark); display:flex; align-items:center; justify-content:center;
-  transition:background 0.2s;
-}
-.sp-close:hover { background:var(--p-accent); }
-
-/* ── SETTINGS FORM ── */
-.s-label { font-size:0.78em; font-weight:700; color:#7a5070; margin-bottom:4px; display:block; }
-.s-input {
-  width:100%; padding:9px 12px; border:1.5px solid #e8d0e0;
-  border-radius:10px; font-family:var(--font-main); font-size:0.88em;
-  color:#3a2030; background:#FDF7FA; transition:border-color 0.2s; margin-bottom:12px;
-}
-.s-input:focus { outline:none; border-color:var(--p); background:#fff; }
-.genre-wrap { display:grid; grid-template-columns:1fr 1fr; gap:6px; margin-top:4px; }
-.genre-btn {
-  padding:7px 4px; border:1.5px solid #e8d0e0; border-radius:9px;
-  background:#FDF7FA; font-size:0.78em; font-family:var(--font-main);
-  cursor:pointer; text-align:center; transition:all 0.18s; color:#6a5060;
-}
-.genre-btn.on { background:var(--p); border-color:var(--p); color:#fff; }
-.save-note { font-size:0.74em; color:#b09aaa; margin-top:10px; line-height:1.7; }
-.genre-btn-other { border-style:dashed; }
-.genre-btn-other.on { background:var(--p-dark); border-color:var(--p-dark); color:#fff; border-style:solid; }
-.demo-bar {
-  display:flex; gap:8px; margin-top:18px; padding-top:16px;
-  border-top:2px dashed var(--p-accent);
-}
-.demo-btn {
-  flex:1; padding:10px 6px; border-radius:12px; font-family:var(--font-main);
-  font-size:0.82em; font-weight:700; cursor:pointer; transition:all 0.2s;
-  text-align:center; border:2px solid;
-}
-.demo-btn-fill {
-  background:var(--p-grad); color:#fff; border-color:transparent;
-  box-shadow:0 3px 10px rgba(193,53,132,0.25);
-}
-.demo-btn-fill:hover { transform:translateY(-1px); box-shadow:0 5px 14px rgba(193,53,132,0.35); }
-.demo-btn-clear {
-  background:#fff; color:#9a6080; border-color:#e8d0e0;
-}
-.demo-btn-clear:hover { background:#FDF0F8; border-color:var(--p); color:var(--p); }
-.demo-msg {
-  display:none; margin-top:10px; padding:9px 14px;
-  background:#E8F8F0; border:1.5px solid #80D4A8;
-  border-radius:10px; font-size:0.82em; color:#2E7A50;
-  text-align:center; font-weight:700;
-  animation: fadeIn 0.3s ease;
-}
-.demo-msg.error { background:#FFE8E8; border-color:#F5A0A0; color:#C03030; }
-@keyframes fadeIn { from{opacity:0;transform:translateY(-4px);} to{opacity:1;transform:translateY(0);} }
-
-/* ── USAGE PANEL ── */
-.usage-section { margin-bottom:18px; }
-.usage-stitle { font-size:0.85em; font-weight:700; color:var(--p); margin-bottom:8px; }
-.usage-list { list-style:none; padding:0; }
-.usage-list li {
-  font-size:0.84em; color:#5a4050; margin-bottom:5px;
-  padding:3px 0 3px 10px; border-left:3px solid var(--p-accent);
-}
-.usage-steps { padding-left:18px; }
-.usage-steps li { font-size:0.84em; color:#5a4050; margin-bottom:6px; line-height:1.7; }
-.info-box {
-  background:var(--p-light); border-radius:10px; padding:10px 14px;
-  font-size:0.82em; color:#6a4060; margin-top:14px; line-height:1.8;
+/* ═══════════════════════════════════════
+   STEP STRIP
+═══════════════════════════════════════ */
+.step-strip {
+  display: flex;
+  align-items: center;
+  padding: 10px 14px 0;
+  gap: 0;
+  overflow: hidden;
 }
 
-/* ── MAIN ── */
-.main-wrap { max-width:860px; margin:0 auto; padding:20px 16px 50px; }
+.step-pill {
+  flex: 1;
+  text-align: center;
+  font-size: 0.68em;
+  font-weight: 700;
+  padding: 5px 2px;
+  color: var(--t2);
+  cursor: pointer;
+  position: relative;
+  border-bottom: 2px solid transparent;
+  transition: all 0.22s;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.step-pill.current {
+  color: var(--active);
+  border-bottom-color: var(--active);
+}
+.step-pill.done {
+  color: #C13584;
+  opacity: 0.55;
+}
+.step-hint {
+  font-size: 0.73em;
+  color: var(--t2);
+  text-align: center;
+  padding: 5px 14px 2px;
+  min-height: 22px;
+}
 
+/* ═══════════════════════════════════════
+   TRIAL BAR
+═══════════════════════════════════════ */
 .trial-bar {
-  border-radius:12px; padding:11px 16px; font-size:0.84em;
-  text-align:center; margin-bottom:16px;
-  font-weight:700; letter-spacing:0.02em;
-  transition: all 0.4s ease;
+  margin: 8px 14px;
+  padding: 10px 14px;
+  border-radius: 12px;
+  font-size: 0.82em;
+  font-weight: 700;
+  text-align: center;
+  transition: all 0.3s;
 }
-/* 未使用：グラデーション＋ギフト感 */
 .trial-bar.state-fresh {
-  background: linear-gradient(135deg,#FFF8E8,#FFF0F5);
-  border:2px solid #F5C8D8; color:#9a4060;
-  box-shadow: 0 2px 10px rgba(232,96,138,0.12);
+  background: linear-gradient(135deg,#FDF0F8,#FFF3E0);
+  border: 1.5px solid #F5B8D8;
+  color: #8a3060;
 }
-/* 残り2回：ライトグリーン */
 .trial-bar.state-2 {
-  background:#F0FAF4; border:2px solid #90D4A8; color:#2E7A50;
+  background: #F0FAF4;
+  border: 1.5px solid #90D4A8;
+  color: #2E7A50;
 }
-/* 残り1回：オレンジ系 */
 .trial-bar.state-1 {
-  background:#FFF4E8; border:2px solid #F5B870; color:#8a5200;
+  background: #FFF6E8;
+  border: 1.5px solid #FFB870;
+  color: #8a5000;
 }
-/* 終了：赤系・購入リンク */
 .trial-bar.state-end {
-  background:#FFE8E8; border:2px solid #F5A0A0; color:#B02020;
-  padding:13px 16px;
+  background: #FFF0F0;
+  border: 1.5px solid #F5A0A0;
+  color: #B02020;
+  padding: 12px 14px;
 }
 .trial-stripe-btn {
-  display:inline-block; margin-top:8px;
-  background:linear-gradient(135deg,#833AB4,#E1306C,#F77737);
-  color:#fff; font-weight:700; font-size:0.92em;
-  padding:9px 22px; border-radius:20px; text-decoration:none;
-  letter-spacing:0.04em; transition:opacity 0.18s;
-  box-shadow:0 3px 10px rgba(193,53,132,0.3);
+  display: inline-block;
+  margin-top: 8px;
+  background: var(--ig-btn);
+  color: #fff;
+  font-weight: 700;
+  font-size: 0.9em;
+  padding: 9px 24px;
+  border-radius: 22px;
+  text-decoration: none;
+  box-shadow: 0 3px 12px rgba(193,53,132,0.3);
 }
-.trial-stripe-btn:hover { opacity:0.85; }
 
-.card { background:#fff; border-radius:var(--radius); padding:22px; box-shadow:var(--card-shadow); }
+/* ═══════════════════════════════════════
+   MAIN CONTENT
+═══════════════════════════════════════ */
+.app-main {
+  padding: 0 14px 16px;
+}
+
+/* ═══════════════════════════════════════
+   TAB PANES
+═══════════════════════════════════════ */
+.tab-pane { display: none; }
+.tab-pane.on { display: block; }
+
+/* ═══════════════════════════════════════
+   CARDS
+═══════════════════════════════════════ */
+.card {
+  background: var(--card);
+  border-radius: var(--r);
+  padding: 18px 16px;
+  margin-bottom: 12px;
+  border: 1px solid var(--border);
+}
+
 .card-title {
-  font-family:var(--font-head); font-size:0.95em; font-weight:700; color:var(--p);
-  border-left:4px solid var(--p); padding-left:10px; margin-bottom:16px;
+  font-size: 0.88em;
+  font-weight: 700;
+  color: var(--t1);
+  margin-bottom: 12px;
+  display: flex;
+  align-items: center;
+  gap: 7px;
 }
-.tab-pane { display:none; }
-.tab-pane.on { display:block; }
 
-.f-group { margin-bottom:14px; }
-.f-label { display:block; font-size:0.82em; font-weight:700; color:#7a5060; margin-bottom:5px; }
-.f-input,.f-textarea {
-  width:100%; padding:10px 14px; border:1.5px solid #e8d0e0;
-  border-radius:12px; font-family:var(--font-main); font-size:0.88em;
-  color:#3a2030; background:#FDF7FA; transition:border-color 0.2s;
+.card-title::before {
+  content: '';
+  width: 3px; height: 16px;
+  background: var(--ig);
+  border-radius: 2px;
+  flex-shrink: 0;
 }
-.f-input:focus,.f-textarea:focus { outline:none; border-color:var(--p); background:#fff; }
-.f-textarea { resize:vertical; line-height:1.7; }
 
-.gen-btn {
-  width:100%; padding:14px; background:var(--p-grad); color:#fff;
-  border:none; border-radius:14px; font-family:var(--font-head);
-  font-size:1em; font-weight:700; cursor:pointer; letter-spacing:0.06em;
-  box-shadow:0 4px 16px rgba(193,53,132,0.28); transition:all 0.2s; margin-top:4px;
+.card-desc {
+  font-size: 0.82em;
+  color: var(--t2);
+  margin-bottom: 14px;
+  line-height: 1.75;
 }
-.gen-btn:hover { transform:translateY(-2px); box-shadow:0 6px 20px rgba(193,53,132,0.38); }
-.gen-btn:active { transform:translateY(0); }
 
-.copy-btn {
-  display:inline-flex; align-items:center; gap:6px; margin-top:8px;
-  padding:7px 18px; background:#fff; color:var(--p);
-  border:2px solid var(--p); border-radius:10px;
-  font-family:var(--font-main); font-size:0.85em; font-weight:700;
-  cursor:pointer; transition:all 0.18s;
+/* ═══════════════════════════════════════
+   FORM ELEMENTS
+═══════════════════════════════════════ */
+.f-group { margin-bottom: 14px; }
+
+.f-label {
+  display: block;
+  font-size: 0.78em;
+  font-weight: 700;
+  color: var(--t1);
+  margin-bottom: 6px;
 }
-.copy-btn:hover { background:var(--p); color:#fff; }
-.copy-btn.copied { background:#4CAF50; border-color:#4CAF50; color:#fff; }
 
-.out-section { margin-top:18px; }
-.out-label { font-size:0.8em; font-weight:700; color:var(--p); margin-bottom:6px; }
+.f-input, .f-textarea {
+  width: 100%;
+  padding: 11px 13px;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  font-family: var(--font);
+  font-size: 0.88em;
+  color: var(--t1);
+  background: var(--bg);
+  transition: border-color 0.18s, background 0.18s;
+  -webkit-appearance: none;
+}
+.f-input:focus, .f-textarea:focus {
+  outline: none;
+  border-color: var(--active);
+  background: #fff;
+}
+.f-textarea { resize: vertical; line-height: 1.65; }
+
+/* ═══════════════════════════════════════
+   BUTTONS
+═══════════════════════════════════════ */
+.btn-primary {
+  width: 100%;
+  padding: 14px;
+  background: var(--ig-btn);
+  color: #fff;
+  border: none;
+  border-radius: 12px;
+  font-family: var(--font);
+  font-size: 0.95em;
+  font-weight: 700;
+  cursor: pointer;
+  letter-spacing: 0.03em;
+  box-shadow: 0 4px 16px rgba(193,53,132,0.28);
+  transition: opacity 0.18s, transform 0.18s;
+  -webkit-appearance: none;
+}
+.btn-primary:active { opacity: 0.85; transform: scale(0.98); }
+
+.btn-outline {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  margin-top: 8px;
+  padding: 8px 16px;
+  background: #fff;
+  color: var(--active);
+  border: 1.5px solid var(--active);
+  border-radius: 8px;
+  font-family: var(--font);
+  font-size: 0.82em;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.18s;
+  -webkit-appearance: none;
+}
+.btn-outline:active { background: var(--active); color: #fff; }
+.btn-outline.copied { background: #4CAF50; border-color: #4CAF50; color: #fff; }
+
+.btn-copy-all {
+  width: 100%;
+  margin-top: 16px;
+  padding: 12px;
+  background: #fff;
+  border: 1.5px solid var(--border);
+  border-radius: 12px;
+  font-family: var(--font);
+  font-size: 0.85em;
+  font-weight: 700;
+  color: var(--t1);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  transition: all 0.18s;
+  -webkit-appearance: none;
+}
+.btn-copy-all:active { background: #F5F5F5; }
+.btn-copy-all.copied { background: #4CAF50; border-color: #4CAF50; color: #fff; }
+
+/* ═══════════════════════════════════════
+   OUTPUT BOXES
+═══════════════════════════════════════ */
+.out-section { margin-top: 16px; }
+
+.out-label {
+  font-size: 0.75em;
+  font-weight: 700;
+  color: var(--t2);
+  margin-bottom: 6px;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
 .out-box {
-  background:var(--p-light); border:1.5px solid var(--p-accent);
-  border-radius:12px; padding:14px 16px; white-space:pre-wrap;
-  font-size:0.88em; line-height:1.85; color:#3a2030; min-height:80px;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-left: 3px solid var(--active);
+  border-radius: 10px;
+  padding: 12px 14px;
+  white-space: pre-wrap;
+  font-size: 0.86em;
+  line-height: 1.85;
+  color: var(--t1);
+  min-height: 70px;
 }
-.out-divider { border:none; border-top:1.5px dashed var(--p-accent); margin:18px 0; }
 
-.loading { display:none; text-align:center; padding:28px; color:var(--p); }
-.spin {
-  display:inline-block; width:28px; height:28px;
-  border:3px solid var(--p-accent); border-top-color:var(--p);
-  border-radius:50%; animation:spin 0.75s linear infinite; margin-bottom:10px;
+/* BASE専用エリア */
+.base-section-head {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 20px 0 12px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid var(--border);
 }
-@keyframes spin { to { transform:rotate(360deg); } }
+.base-badge {
+  background: var(--ig-btn);
+  color: #fff;
+  font-size: 0.72em;
+  font-weight: 700;
+  padding: 3px 10px;
+  border-radius: 20px;
+}
+.base-section-title {
+  font-size: 0.88em;
+  font-weight: 700;
+  color: var(--t1);
+}
 
-/* PHOTO TIPS */
-.tips-card { background:#fff; border-radius:var(--radius); overflow:hidden; box-shadow:var(--card-shadow); margin-top:18px; }
-.tips-head {
-  display:flex; justify-content:space-between; align-items:center;
-  padding:16px 22px; cursor:pointer; font-family:var(--font-head);
-  font-size:0.95em; font-weight:700; color:var(--p); user-select:none;
+.out-divider {
+  border: none;
+  border-top: 1px solid var(--border);
+  margin: 18px 0;
 }
-.tips-body { display:none; padding:0 22px 22px; }
-.tips-body.open { display:block; }
-.tips-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(180px,1fr)); gap:12px; margin-top:4px; }
-.tip-c { background:var(--p-light); border-radius:12px; padding:14px; font-size:0.83em; line-height:1.75; }
-.tip-c strong { display:block; color:var(--p); font-weight:700; margin-bottom:4px; }
 
-/* MODAL */
-.modal-ov {
-  display:none; position:fixed; inset:0; background:rgba(50,10,40,0.55);
-  z-index:999; justify-content:center; align-items:center; backdrop-filter:blur(3px);
-}
-.modal-ov.show { display:flex; }
-.modal-box {
-  background:#fff; border-radius:22px; padding:36px 28px;
-  max-width:360px; width:92%; text-align:center;
-  box-shadow:0 20px 60px rgba(0,0,0,0.25); animation:popIn 0.25s ease;
-}
-@keyframes popIn { from { transform:scale(0.85); opacity:0; } to { transform:scale(1); opacity:1; } }
-.modal-box h2 { font-family:var(--font-head); font-size:1.25em; color:var(--p); margin-bottom:12px; }
-.modal-box p { font-size:0.86em; color:#7a5060; margin-bottom:20px; line-height:1.8; }
-.modal-pw {
-  width:100%; padding:12px; border:2px solid #e8d0e0; border-radius:12px;
-  font-size:1em; text-align:center; letter-spacing:0.15em;
-  font-family:var(--font-main); margin-bottom:12px;
-}
-.modal-pw:focus { outline:none; border-color:var(--p); }
-.modal-btn {
-  width:100%; padding:12px; background:var(--p-grad); color:#fff;
-  border:none; border-radius:12px; font-family:var(--font-head);
-  font-size:1em; font-weight:700; cursor:pointer;
-}
-.modal-err { color:#E74C3C; font-size:0.82em; display:none; margin-top:6px; }
-.modal-link { font-size:0.8em; color:#aaa; margin-top:16px; }
-.modal-link a { color:var(--p); }
-
-.footer { text-align:center; padding:20px; font-size:0.78em; color:#b09aaa; border-top:1px solid #F0E4EA; margin-top:10px; }
-
-/* ════════════════════════
-   ハンドメイドアニメーション
-════════════════════════ */
+/* ═══════════════════════════════════════
+   LOADING ANIMATION
+═══════════════════════════════════════ */
 .hm-loading {
-  display:none;
-  text-align:center;
-  padding:32px 16px;
+  display: none;
+  text-align: center;
+  padding: 36px 16px;
 }
 .hm-stage {
-  position:relative;
-  width:100px; height:100px;
-  margin:0 auto 16px;
+  position: relative;
+  width: 90px; height: 90px;
+  margin: 0 auto 16px;
 }
-/* 糸玉 */
 .hm-yarn {
-  position:absolute;
-  top:50%; left:50%;
-  transform:translate(-50%,-50%);
-  font-size:3em;
+  position: absolute; top: 50%; left: 50%;
+  transform: translate(-50%,-50%);
+  font-size: 2.8em;
   animation: yarnSpin 1.6s ease-in-out infinite;
 }
 @keyframes yarnSpin {
-  0%   { transform:translate(-50%,-50%) rotate(0deg) scale(1); }
-  25%  { transform:translate(-50%,-50%) rotate(15deg) scale(1.08); }
-  50%  { transform:translate(-50%,-50%) rotate(0deg) scale(1); }
-  75%  { transform:translate(-50%,-50%) rotate(-15deg) scale(1.08); }
-  100% { transform:translate(-50%,-50%) rotate(0deg) scale(1); }
+  0%,100% { transform: translate(-50%,-50%) rotate(0deg) scale(1); }
+  25%      { transform: translate(-50%,-50%) rotate(15deg) scale(1.08); }
+  75%      { transform: translate(-50%,-50%) rotate(-15deg) scale(1.08); }
 }
-/* 針 */
 .hm-needle {
-  position:absolute;
-  top:8px; left:50%;
-  transform:translateX(-50%);
-  font-size:1.4em;
+  position: absolute; top: 6px; left: 50%;
+  font-size: 1.3em;
   animation: needleDip 1.6s ease-in-out infinite;
-  transform-origin: bottom center;
 }
 @keyframes needleDip {
-  0%,100% { transform:translateX(-50%) rotate(-30deg) translateY(0px); opacity:1; }
-  30%     { transform:translateX(-50%) rotate(-30deg) translateY(14px); opacity:1; }
-  50%     { transform:translateX(-50%) rotate(-30deg) translateY(14px); opacity:0.4; }
-  70%     { transform:translateX(-50%) rotate(-30deg) translateY(0px); opacity:1; }
+  0%,100%,70% { transform: translateX(-50%) rotate(-30deg) translateY(0); opacity:1; }
+  30%,50%     { transform: translateX(-50%) rotate(-30deg) translateY(14px); opacity:0.5; }
 }
-/* キラキラ */
 .hm-spark {
-  position:absolute;
-  font-size:0.9em;
+  position: absolute; font-size: 0.85em;
   animation: sparkle 1.6s ease-in-out infinite;
 }
-.hm-spark:nth-child(3){ top:4px;  right:10px; animation-delay:0s;    }
-.hm-spark:nth-child(4){ top:50%; left:4px;  animation-delay:0.4s;  }
-.hm-spark:nth-child(5){ bottom:8px; right:8px; animation-delay:0.8s;  }
-.hm-spark:nth-child(6){ bottom:4px; left:14px;  animation-delay:1.2s; }
+.hm-spark:nth-child(3)  { top:4px;  right:8px;  animation-delay:0s;   }
+.hm-spark:nth-child(4)  { top:50%; left:2px;   animation-delay:0.4s; }
+.hm-spark:nth-child(5)  { bottom:6px; right:6px; animation-delay:0.8s; }
+.hm-spark:nth-child(6)  { bottom:4px; left:12px; animation-delay:1.2s; }
 @keyframes sparkle {
   0%,100%{ opacity:0; transform:scale(0.5); }
   50%    { opacity:1; transform:scale(1.2); }
 }
 .hm-text {
-  font-family:var(--font-head);
-  font-size:0.9em;
-  color:var(--p);
-  letter-spacing:0.05em;
+  font-size: 0.88em; font-weight: 700;
+  background: var(--ig);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
   animation: textPulse 1.6s ease-in-out infinite;
 }
 .hm-dots::after {
   content:'';
   animation: dots 1.6s steps(4,end) infinite;
 }
-@keyframes dots {
-  0%  { content:''; }
-  25% { content:'.'; }
-  50% { content:'..'; }
-  75% { content:'...'; }
+@keyframes dots { 0%{content:'';} 25%{content:'.';} 50%{content:'..';} 75%{content:'...';} }
+@keyframes textPulse { 0%,100%{opacity:.7;} 50%{opacity:1;} }
+
+/* ═══════════════════════════════════════
+   PHOTO TIPS
+═══════════════════════════════════════ */
+.tips-card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--r);
+  overflow: hidden;
+  margin-bottom: 12px;
 }
-@keyframes textPulse {
-  0%,100%{ opacity:0.7; }
-  50%    { opacity:1; }
+.tips-head {
+  display: flex; justify-content: space-between; align-items: center;
+  padding: 14px 16px;
+  cursor: pointer;
+  font-size: 0.88em; font-weight: 700; color: var(--t1);
+  user-select: none;
+}
+.tips-body { display: none; padding: 0 16px 16px; }
+.tips-body.open { display: block; }
+.tip-item {
+  padding: 10px 0;
+  border-top: 1px solid var(--border);
+  font-size: 0.82em;
+  line-height: 1.75;
+  color: var(--t1);
+}
+.tip-item strong { color: var(--active); display: block; margin-bottom: 2px; }
+
+/* ═══════════════════════════════════════
+   BOTTOM NAV
+═══════════════════════════════════════ */
+.bottom-nav {
+  position: fixed;
+  bottom: 0; left: 0; right: 0;
+  height: calc(var(--bot-h) + env(safe-area-inset-bottom));
+  padding-bottom: env(safe-area-inset-bottom);
+  background: #fff;
+  border-top: 1px solid var(--border);
+  display: flex;
+  z-index: 600;
+}
+.nav-item {
+  flex: 1;
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  gap: 3px;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  color: var(--t2);
+  font-family: var(--font);
+  font-size: 0.62em;
+  font-weight: 700;
+  padding: 6px 2px;
+  transition: all 0.18s;
+  -webkit-appearance: none;
+  position: relative;
+}
+.nav-icon { font-size: 1.5em; line-height: 1; }
+.nav-item.on { color: var(--active); }
+.nav-item.on::after {
+  content: '';
+  position: absolute;
+  top: 0; left: 20%; right: 20%;
+  height: 2px;
+  background: var(--ig);
+  border-radius: 0 0 2px 2px;
 }
 
-/* ════════════════════════
-   ステップフロー（ヘッダー）
-════════════════════════ */
-.step-flow {
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  gap:4px;
-  padding:8px 12px 0;
-  position:relative;
-  z-index:2;
-  flex-wrap:nowrap;
+/* ═══════════════════════════════════════
+   BOTTOM SHEET PANELS
+═══════════════════════════════════════ */
+.panel-backdrop {
+  display: none;
+  position: fixed; inset: 0;
+  background: rgba(0,0,0,0.5);
+  z-index: 700;
+  backdrop-filter: blur(2px);
 }
-.step-item {
-  display:flex;
-  align-items:center;
-  gap:4px;
-  padding:4px 10px;
-  border-radius:20px;
-  font-size:0.72em;
-  font-weight:700;
-  color:rgba(255,255,255,0.55);
-  background:rgba(255,255,255,0.10);
-  border:1.5px solid transparent;
-  transition:all 0.3s;
-  white-space:nowrap;
-  cursor:pointer;
+.panel-backdrop.show { display: block; }
+
+.slide-panel {
+  position: fixed;
+  bottom: -100%;
+  left: 0; right: 0;
+  max-height: 92vh;
+  background: #fff;
+  border-radius: 20px 20px 0 0;
+  z-index: 800;
+  transition: bottom 0.32s cubic-bezier(0.4,0,0.2,1);
+  overflow-y: auto;
+  padding: 0 18px calc(20px + env(safe-area-inset-bottom));
 }
-.step-item.current {
-  color:#fff;
-  background:rgba(255,255,255,0.22);
-  border-color:rgba(255,255,255,0.6);
-  box-shadow:0 2px 8px rgba(0,0,0,0.12);
-}
-.step-item.done {
-  color:rgba(255,255,255,0.75);
-  background:rgba(255,255,255,0.12);
-}
-.step-arrow {
-  color:rgba(255,255,255,0.45);
-  font-size:0.8em;
-  flex-shrink:0;
-}
-.step-next-hint {
-  text-align:center;
-  font-size:0.72em;
-  color:rgba(255,255,255,0.80);
-  padding:4px 0 0;
-  position:relative;
-  z-index:2;
-  letter-spacing:0.02em;
-  min-height:18px;
+.slide-panel.open { bottom: 0; }
+
+/* ドラッグハンドル */
+.panel-handle {
+  width: 36px; height: 4px;
+  background: var(--border);
+  border-radius: 2px;
+  margin: 12px auto 16px;
 }
 
-/* ════════════════════════
-   まとめてコピーボタン
-════════════════════════ */
-.copy-all-btn {
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  gap:8px;
-  width:100%;
-  margin-top:18px;
-  padding:13px;
-  background:var(--p-light);
-  color:var(--p);
-  border:2px solid var(--p);
-  border-radius:14px;
-  font-family:var(--font-head);
-  font-size:0.95em;
-  font-weight:700;
-  cursor:pointer;
-  transition:all 0.2s;
-  letter-spacing:0.04em;
+.sp-header {
+  display: flex; justify-content: space-between; align-items: center;
+  margin-bottom: 18px;
+  padding-bottom: 14px;
+  border-bottom: 1px solid var(--border);
 }
-.copy-all-btn:hover { background:var(--p); color:#fff; }
-.copy-all-btn.copied { background:#4CAF50; border-color:#4CAF50; color:#fff; }
+.sp-title {
+  font-size: 1em; font-weight: 700; color: var(--t1);
+}
+.sp-close {
+  width: 30px; height: 30px;
+  border-radius: 50%;
+  border: none;
+  background: var(--bg);
+  color: var(--t2);
+  font-size: 1em;
+  cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+}
 
-/* ════════════════════════
-   タブ④ カレンダー
-════════════════════════ */
-.cal-header {
-  display:flex; align-items:center; justify-content:space-between;
-  margin-bottom:16px;
+/* ═══════════════════════════════════════
+   SETTINGS FORM
+═══════════════════════════════════════ */
+.s-label {
+  display: block;
+  font-size: 0.76em; font-weight: 700;
+  color: var(--t2);
+  margin-bottom: 5px;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
 }
-.cal-title {
-  font-family:var(--font-head); font-size:1.05em;
-  font-weight:700; color:var(--p);
+.s-input {
+  width: 100%;
+  padding: 11px 13px;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  font-family: var(--font);
+  font-size: 0.9em;
+  color: var(--t1);
+  background: var(--bg);
+  margin-bottom: 14px;
+  -webkit-appearance: none;
 }
+.s-input:focus { outline: none; border-color: var(--active); background: #fff; }
+
+/* テーマ */
+.theme-row { display: flex; gap: 10px; margin-bottom: 16px; }
+.theme-dot {
+  width: 32px; height: 32px;
+  border-radius: 50%;
+  border: 2.5px solid var(--border);
+  cursor: pointer;
+  transition: transform 0.18s, border-color 0.18s;
+  flex-shrink: 0;
+}
+.theme-dot:active { transform: scale(1.18); }
+.theme-dot.on { border-color: var(--t1); transform: scale(1.2); box-shadow: 0 0 0 3px rgba(0,0,0,0.1); }
+.theme-dot.t-ig     { background: linear-gradient(135deg,#833AB4,#E1306C,#F77737); }
+.theme-dot.t-pink   { background: linear-gradient(135deg,#E8608A,#C04070); }
+.theme-dot.t-blue   { background: linear-gradient(135deg,#4A90D9,#2260B0); }
+.theme-dot.t-green  { background: linear-gradient(135deg,#48B87A,#2E8A58); }
+.theme-dot.t-yellow { background: linear-gradient(135deg,#F9B234,#E08020); }
+
+/* ジャンル */
+.genre-wrap {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 7px;
+  margin-bottom: 10px;
+}
+.genre-btn {
+  padding: 9px 4px;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  background: var(--bg);
+  font-family: var(--font);
+  font-size: 0.74em;
+  font-weight: 700;
+  cursor: pointer;
+  text-align: center;
+  color: var(--t2);
+  transition: all 0.18s;
+  -webkit-appearance: none;
+}
+.genre-btn.on {
+  background: var(--active);
+  border-color: var(--active);
+  color: #fff;
+}
+.genre-btn-other { border-style: dashed; }
+.genre-btn-other.on { border-style: solid; background: #833AB4; border-color: #833AB4; }
+
+.save-note { font-size: 0.74em; color: var(--t2); line-height: 1.7; margin-top: 8px; }
+
+/* デモボタン */
+.demo-bar {
+  display: flex; gap: 8px;
+  margin-top: 18px; padding-top: 16px;
+  border-top: 1px dashed var(--border);
+}
+.demo-btn {
+  flex: 1;
+  padding: 10px 6px;
+  border-radius: 10px;
+  font-family: var(--font);
+  font-size: 0.82em;
+  font-weight: 700;
+  cursor: pointer;
+  text-align: center;
+  -webkit-appearance: none;
+}
+.demo-btn-fill { background: var(--ig-btn); color: #fff; border: none; }
+.demo-btn-clear { background: #fff; color: var(--t2); border: 1px solid var(--border); }
+.demo-msg {
+  display: none;
+  margin-top: 10px; padding: 9px 12px;
+  background: #E8F8F0; border: 1px solid #80D4A8;
+  border-radius: 10px; font-size: 0.8em; color: #2E7A50;
+  text-align: center; font-weight: 700;
+}
+.demo-msg.error { background: #FFE8E8; border-color: #F5A0A0; color: #C03030; }
+
+/* 使い方 */
+.usage-step {
+  margin-bottom: 16px;
+  padding: 14px;
+  border-radius: 12px;
+  border: 1px solid var(--border);
+}
+.usage-step-head {
+  font-size: 0.86em; font-weight: 700;
+  color: var(--t1);
+  margin-bottom: 8px;
+  display: flex; align-items: center; gap: 8px;
+}
+.usage-num {
+  width: 24px; height: 24px;
+  border-radius: 50%;
+  background: var(--ig-btn);
+  color: #fff;
+  font-size: 0.78em; font-weight: 700;
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0;
+}
+.usage-list { list-style: none; padding: 0; }
+.usage-list li {
+  font-size: 0.82em; color: var(--t2);
+  padding: 3px 0 3px 12px;
+  border-left: 2px solid var(--border);
+  margin-bottom: 5px;
+}
+.usage-result {
+  margin-top: 8px; padding: 8px 10px;
+  border-radius: 8px;
+  font-size: 0.78em; line-height: 1.8;
+}
+
+/* ═══════════════════════════════════════
+   PASSWORD MODAL
+═══════════════════════════════════════ */
+.modal-ov {
+  display: none;
+  position: fixed; inset: 0;
+  background: rgba(0,0,0,0.6);
+  z-index: 999;
+  justify-content: center; align-items: flex-end;
+  backdrop-filter: blur(4px);
+}
+.modal-ov.show { display: flex; }
+.modal-box {
+  background: #fff;
+  border-radius: 20px 20px 0 0;
+  padding: 24px 22px calc(24px + env(safe-area-inset-bottom));
+  width: 100%;
+  animation: slideUp 0.28s ease;
+}
+@keyframes slideUp { from{transform:translateY(100%);} to{transform:translateY(0);} }
+.modal-handle { width:36px;height:4px;background:var(--border);border-radius:2px;margin:0 auto 20px; }
+.modal-title { font-size:1.05em;font-weight:700;color:var(--t1);text-align:center;margin-bottom:8px; }
+.modal-sub { font-size:0.83em;color:var(--t2);text-align:center;margin-bottom:18px;line-height:1.7; }
+.modal-pw {
+  width:100%;padding:13px;border:1px solid var(--border);
+  border-radius:12px;font-size:1em;text-align:center;
+  letter-spacing:0.12em;font-family:var(--font);margin-bottom:12px;
+  -webkit-appearance:none;
+}
+.modal-pw:focus { outline:none;border-color:var(--active); }
+.modal-submit {
+  width:100%;padding:14px;background:var(--ig-btn);color:#fff;
+  border:none;border-radius:12px;font-family:var(--font);
+  font-size:0.95em;font-weight:700;cursor:pointer;
+}
+.modal-err { color:#E74C3C;font-size:0.82em;display:none;text-align:center;margin-top:6px; }
+.modal-link { font-size:0.78em;color:var(--t2);text-align:center;margin-top:14px; }
+.modal-link a { color:var(--active); }
+
+/* ═══════════════════════════════════════
+   CALENDAR
+═══════════════════════════════════════ */
+.cal-header { display:flex;align-items:center;justify-content:space-between;margin-bottom:14px; }
+.cal-title { font-size:0.95em;font-weight:700;color:var(--t1); }
 .cal-nav-btn {
-  background:var(--p-light); border:1.5px solid var(--p-accent);
-  border-radius:10px; padding:6px 14px; font-size:0.9em;
-  cursor:pointer; color:var(--p); font-weight:700;
-  transition:all 0.18s;
+  padding:7px 14px;border:1px solid var(--border);
+  border-radius:8px;background:#fff;font-size:0.82em;font-weight:700;
+  color:var(--t1);cursor:pointer;-webkit-appearance:none;
 }
-.cal-nav-btn:hover { background:var(--p); color:#fff; }
-
-.cal-grid {
-  display:grid; grid-template-columns:repeat(7,1fr);
-  gap:3px; margin-bottom:18px;
-}
-.cal-dow {
-  text-align:center; font-size:0.72em; font-weight:700;
-  color:#9a7080; padding:6px 0;
-}
+.cal-grid { display:grid;grid-template-columns:repeat(7,1fr);gap:2px;margin-bottom:16px; }
+.cal-dow { text-align:center;font-size:0.7em;font-weight:700;color:var(--t2);padding:6px 0; }
 .cal-day {
-  min-height:52px; border-radius:10px; padding:5px 4px 4px;
-  background:#FDF7FA; border:1.5px solid transparent;
-  cursor:pointer; transition:all 0.18s; position:relative;
+  min-height:46px;border-radius:8px;padding:5px 3px 3px;
+  background:var(--bg);border:1px solid transparent;
+  cursor:pointer;position:relative;transition:all 0.15s;
 }
-.cal-day:hover { background:var(--p-light); border-color:var(--p-accent); }
-.cal-day.today { background:var(--p-light); border-color:var(--p); }
-.cal-day.empty { background:transparent; cursor:default; border:none; }
-.cal-day.has-post { border-color:var(--p-accent); }
+.cal-day:active { background:#F0F0F0; }
+.cal-day.today { border-color:var(--active); }
+.cal-day.empty { background:transparent;border:none;cursor:default; }
+.cal-day.has-post { background:#FFF0F8; }
 .cal-day-num {
-  font-size:0.78em; font-weight:700; color:#5a4050;
-  text-align:center; display:block;
+  font-size:0.76em;font-weight:700;color:var(--t1);
+  text-align:center;display:block;
 }
 .cal-day.today .cal-day-num {
-  background:var(--p); color:#fff; border-radius:50%;
-  width:22px; height:22px; line-height:22px;
-  margin:0 auto;
+  background:var(--active);color:#fff;border-radius:50%;
+  width:20px;height:20px;line-height:20px;margin:0 auto;
 }
-.cal-day-marks {
-  display:flex; flex-wrap:wrap; gap:2px;
-  justify-content:center; margin-top:3px;
-}
-.cal-mark {
-  font-size:0.75em; line-height:1;
-}
+.cal-day-marks { display:flex;flex-wrap:wrap;gap:1px;justify-content:center;margin-top:2px; }
+.cal-mark { font-size:0.7em;line-height:1; }
 
-/* 登録モーダル */
+/* カレンダーモーダル */
 .cal-modal-ov {
-  display:none; position:fixed; inset:0;
-  background:rgba(50,10,40,0.55); z-index:800;
-  justify-content:center; align-items:center;
+  display:none;position:fixed;inset:0;
+  background:rgba(0,0,0,0.5);z-index:900;
+  justify-content:center;align-items:flex-end;
   backdrop-filter:blur(3px);
 }
 .cal-modal-ov.show { display:flex; }
 .cal-modal {
-  background:#fff; border-radius:20px; padding:26px 22px;
-  max-width:440px; width:94%; max-height:88vh;
-  overflow-y:auto; box-shadow:0 20px 60px rgba(0,0,0,0.25);
-  animation:popIn 0.22s ease;
+  background:#fff;border-radius:20px 20px 0 0;
+  padding:20px 18px calc(20px + env(safe-area-inset-bottom));
+  width:100%;max-height:88vh;overflow-y:auto;
+  animation:slideUp 0.25s ease;
 }
-.cal-modal-head {
-  display:flex; justify-content:space-between; align-items:center;
-  margin-bottom:18px;
-}
-.cal-modal-title {
-  font-family:var(--font-head); font-size:1em;
-  font-weight:700; color:var(--p);
-}
+.cal-modal-head { display:flex;justify-content:space-between;align-items:center;margin-bottom:16px; }
+.cal-modal-title { font-size:0.95em;font-weight:700;color:var(--t1); }
 .cal-modal-close {
-  background:var(--p-light); border:none; border-radius:50%;
-  width:32px; height:32px; font-size:1em; cursor:pointer;
-  color:var(--p-dark); display:flex; align-items:center; justify-content:center;
+  width:30px;height:30px;border-radius:50%;border:none;
+  background:var(--bg);color:var(--t2);cursor:pointer;
+  font-size:1em;display:flex;align-items:center;justify-content:center;
 }
-
-/* プラットフォーム選択 */
-.platform-btns {
-  display:flex; gap:6px; margin-bottom:14px;
-}
+.platform-btns { display:flex;gap:6px;margin-bottom:14px; }
 .platform-btn {
-  flex:1; padding:8px 4px; border-radius:10px; border:2px solid #e8d0e0;
-  background:#fff; font-size:0.8em; font-weight:700; cursor:pointer;
-  text-align:center; transition:all 0.18s; color:#7a5060;
+  flex:1;padding:9px 4px;border-radius:10px;
+  border:1.5px solid var(--border);background:#fff;
+  font-size:0.78em;font-weight:700;cursor:pointer;
+  text-align:center;color:var(--t2);-webkit-appearance:none;transition:all 0.18s;
 }
-.platform-btn.on.ig  { background:#E1306C; border-color:#E1306C; color:#fff; }
-.platform-btn.on.x   { background:#1a1a1a; border-color:#1a1a1a; color:#fff; }
-.platform-btn.on.th  { background:#5a4050; border-color:#5a4050; color:#fff; }
-
-.cal-input {
-  width:100%; padding:9px 12px; border:1.5px solid #e8d0e0;
-  border-radius:10px; font-family:var(--font-main); font-size:0.88em;
-  margin-bottom:10px; background:#FDF7FA;
+.platform-btn.on.ig { background:#E1306C;border-color:#E1306C;color:#fff; }
+.platform-btn.on.x  { background:#1a1a1a;border-color:#1a1a1a;color:#fff; }
+.platform-btn.on.th { background:#5a4050;border-color:#5a4050;color:#fff; }
+.cal-input, .cal-textarea {
+  width:100%;padding:11px 13px;border:1px solid var(--border);
+  border-radius:10px;font-family:var(--font);font-size:0.88em;
+  margin-bottom:10px;background:var(--bg);-webkit-appearance:none;
 }
-.cal-input:focus { outline:none; border-color:var(--p); background:#fff; }
-.cal-textarea {
-  width:100%; padding:9px 12px; border:1.5px solid #e8d0e0;
-  border-radius:10px; font-family:var(--font-main); font-size:0.85em;
-  margin-bottom:14px; background:#FDF7FA; resize:vertical; line-height:1.65;
-}
-.cal-textarea:focus { outline:none; border-color:var(--p); background:#fff; }
-
+.cal-input:focus, .cal-textarea:focus { outline:none;border-color:var(--active);background:#fff; }
+.cal-textarea { resize:vertical;line-height:1.65; }
 .cal-save-btn {
-  width:100%; padding:12px; background:var(--p-grad); color:#fff;
-  border:none; border-radius:12px; font-family:var(--font-head);
-  font-size:0.95em; font-weight:700; cursor:pointer; margin-bottom:10px;
+  width:100%;padding:13px;background:var(--ig-btn);color:#fff;
+  border:none;border-radius:12px;font-family:var(--font);
+  font-size:0.92em;font-weight:700;cursor:pointer;margin-bottom:10px;
 }
 .cal-gcal-btn {
-  width:100%; padding:10px; background:#fff; color:#4285F4;
-  border:2px solid #4285F4; border-radius:12px; font-family:var(--font-main);
-  font-size:0.88em; font-weight:700; cursor:pointer;
-  display:flex; align-items:center; justify-content:center; gap:6px;
-  transition:all 0.18s;
+  width:100%;padding:11px;background:#fff;color:#4285F4;
+  border:1.5px solid #4285F4;border-radius:12px;font-family:var(--font);
+  font-size:0.86em;font-weight:700;cursor:pointer;
+  display:flex;align-items:center;justify-content:center;gap:6px;
 }
-.cal-gcal-btn:hover { background:#4285F4; color:#fff; }
 
-/* 登録済み一覧 */
-.post-list { display:flex; flex-direction:column; gap:10px; margin-top:4px; }
+/* 投稿一覧 */
+.post-list { display:flex;flex-direction:column;gap:10px;margin-top:4px; }
 .post-card {
-  background:#FDF7FA; border:1.5px solid var(--p-accent);
-  border-radius:12px; padding:12px 14px; position:relative;
+  background:var(--card);border:1px solid var(--border);
+  border-radius:12px;padding:12px 14px;
 }
-.post-card-head {
-  display:flex; align-items:center; gap:8px; margin-bottom:6px;
-}
+.post-card-head { display:flex;align-items:center;gap:8px;margin-bottom:6px; }
 .post-platform-badge {
-  font-size:0.75em; font-weight:700; padding:2px 8px;
-  border-radius:20px; color:#fff; flex-shrink:0;
+  font-size:0.72em;font-weight:700;padding:2px 9px;
+  border-radius:20px;color:#fff;flex-shrink:0;
 }
-.badge-ig { background:#E1306C; }
-.badge-x  { background:#1a1a1a; }
-.badge-th { background:#5a4050; }
-.post-date-label {
-  font-size:0.76em; color:#9a7080; font-weight:700;
-}
-.post-title {
-  font-size:0.88em; font-weight:700; color:#3a2030;
-  margin-bottom:4px;
-}
+.badge-ig{background:#E1306C;} .badge-x{background:#1a1a1a;} .badge-th{background:#5a4050;}
+.post-date-label { font-size:0.75em;color:var(--t2);font-weight:700; }
+.post-title { font-size:0.86em;font-weight:700;color:var(--t1);margin-bottom:4px; }
 .post-preview {
-  font-size:0.8em; color:#7a5060; line-height:1.6;
-  display:-webkit-box; -webkit-line-clamp:2;
-  -webkit-box-orient:vertical; overflow:hidden;
+  font-size:0.79em;color:var(--t2);line-height:1.6;
+  display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;
 }
-.post-card-btns {
-  display:flex; gap:6px; margin-top:10px;
-}
+.post-card-btns { display:flex;gap:6px;margin-top:10px; }
 .post-card-btn {
-  flex:1; padding:6px; border-radius:9px; font-size:0.78em;
-  font-weight:700; cursor:pointer; text-align:center;
-  transition:all 0.18s; border:1.5px solid;
+  flex:1;padding:7px 4px;border-radius:8px;font-size:0.75em;
+  font-weight:700;cursor:pointer;text-align:center;
+  border:1.5px solid;-webkit-appearance:none;font-family:var(--font);
 }
-.post-card-btn.gcal { color:#4285F4; border-color:#4285F4; background:#fff; }
-.post-card-btn.gcal:hover { background:#4285F4; color:#fff; }
-.post-card-btn.edit { color:var(--p); border-color:var(--p); background:#fff; }
-.post-card-btn.edit:hover { background:var(--p); color:#fff; }
-.post-card-btn.del  { color:#E74C3C; border-color:#E74C3C; background:#fff; }
-.post-card-btn.del:hover  { background:#E74C3C; color:#fff; }
+.post-card-btn.gcal{color:#4285F4;border-color:#4285F4;background:#fff;}
+.post-card-btn.edit{color:var(--active);border-color:var(--active);background:#fff;}
+.post-card-btn.del{color:#E74C3C;border-color:#E74C3C;background:#fff;}
+.cal-empty-msg{text-align:center;padding:28px 16px;color:var(--t2);font-size:0.84em;line-height:1.9;}
 
-.cal-empty-msg {
-  text-align:center; padding:30px 20px; color:#b09aaa;
-  font-size:0.85em; line-height:1.9;
-}
+/* ═══════════════════════════════════════
+   FOOTER
+═══════════════════════════════════════ */
+.footer { text-align:center;padding:16px;font-size:0.74em;color:var(--t2); }
 
-/* ════════════════════════
-   スマホ対応 ( ~480px )
-════════════════════════ */
-@media (max-width: 480px) {
+/* ═══════════════════════════════════════
+   THEME OVERRIDES（配色切り替え用）
+═══════════════════════════════════════ */
+body.theme-pink   { --active:#E8608A; --ig-btn:linear-gradient(90deg,#E8608A,#C04070); }
+body.theme-blue   { --active:#4A90D9; --ig-btn:linear-gradient(90deg,#4A90D9,#2260B0); }
+body.theme-green  { --active:#48B87A; --ig-btn:linear-gradient(90deg,#48B87A,#2E8A58); }
+body.theme-yellow { --active:#F9A825; --ig-btn:linear-gradient(90deg,#F9A825,#E08020); }
 
-  /* ヘッダー全体を少しコンパクトに */
-  body { padding-top: 148px; }
-
-  .app-header { padding: 0 12px; }
-
-  .header-top { padding: 10px 0 0; gap: 6px; }
-
-  /* タイトルを小さく */
-  .header-title { font-size: 1.15em; letter-spacing: 0.02em; }
-  .header-sub   { font-size: 0.70em; margin-top: 1px; }
-
-  /* ボタン：アイコン＋テキストを縦にコンパクト */
-  .hdr-btn { padding: 6px 10px; min-width: 60px; font-size: 0.68em; }
-  .hdr-btn-icon { font-size: 1.25em; }
-  .hdr-btns { gap: 6px; }
-
-  /* タブ文字を少し小さく */
-  .tab-nav-btn { font-size: 0.70em; padding: 9px 2px; }
-
-  /* メインコンテンツの余白調整 */
-  .main-wrap { padding: 14px 10px 40px; }
-
-  /* カード内余白を詰める */
-  .card { padding: 16px 14px; }
-
-  /* 生成ボタン */
-  .gen-btn { font-size: 0.92em; padding: 12px; }
-
-  /* 出力ボックス */
-  .out-box { font-size: 0.85em; padding: 12px 12px; }
-
-  /* コピーボタン */
-  .copy-btn { font-size: 0.8em; padding: 6px 14px; }
-
-  /* ジャンルボタン */
-  .genre-btn { font-size: 0.74em; padding: 6px 2px; }
-
-  /* 撮影Tipsのグリッドを1列に */
-  .tips-grid { grid-template-columns: 1fr; }
-
-  /* スライドパネルを全画面に近く */
-  .slide-panel { width: 100%; max-width: 100vw; right: -100%; padding-top: 148px; }
-  .slide-panel.open { right: 0; }
-
-  /* モーダル */
-  .modal-box { padding: 28px 20px; }
-}
-
-/* ════════════════════════
-   タブレット ( 481px〜768px )
-════════════════════════ */
-@media (min-width: 481px) and (max-width: 768px) {
-  body { padding-top: 155px; }
-  .header-title { font-size: 1.3em; }
-  .main-wrap { padding: 16px 14px 40px; }
-  .tips-grid { grid-template-columns: 1fr 1fr; }
-  .slide-panel { width: 90%; max-width: 90vw; }
+/* ═══════════════════════════════════════
+   TABLET+
+═══════════════════════════════════════ */
+@media (min-width: 600px) {
+  .app-main { max-width: 620px; margin: 0 auto; padding: 0 20px 20px; }
+  .slide-panel { max-width: 420px; margin: 0 auto; border-radius: 20px 20px 0 0; }
+  .genre-wrap { grid-template-columns: 1fr 1fr 1fr 1fr; }
+  .bottom-nav { max-width: 620px; left: 50%; transform: translateX(-50%); border-left: 1px solid var(--border); border-right: 1px solid var(--border); }
+  .trial-bar { margin: 8px 20px; }
+  .step-strip { max-width: 620px; margin: 0 auto; }
+  .step-hint { max-width: 620px; margin: 0 auto; }
 }
 </style>
 </head>
 <body>
 
-<!-- MODAL -->
+<!-- PASSWORD MODAL -->
 <div class="modal-ov" id="modalOv">
   <div class="modal-box">
-    <h2>🔐 パスワードを入力してください</h2>
-    <p>無料お試し3回を使い切りました。<br>ご購入後にお届けしたパスワードを<br>入力して制限を解除してください。</p>
+    <div class="modal-handle"></div>
+    <div class="modal-title">🔐 パスワードを入力</div>
+    <div class="modal-sub">無料お試し3回を使い切りました。<br>ご購入後のパスワードを入力してください。</div>
     <input type="password" class="modal-pw" id="pwInput" placeholder="パスワードを入力">
     <div class="modal-err" id="pwErr">❌ パスワードが違います</div>
-    <button class="modal-btn" onclick="checkPw()">解除する ✨</button>
-    <div class="modal-link">未購入の方は <a href="https://buy.stripe.com/28E00i8qKgzHa519J2cV20G" target="_blank">こちらから購入 ¥2,980</a></div>
+    <button class="modal-submit" onclick="checkPw()">解除する ✨</button>
+    <div class="modal-link">未購入の方は <a href="https://buy.stripe.com/28E00i8qKgzHa519J2cV20G" target="_blank">こちら ¥2,980</a></div>
+  </div>
+</div>
+
+<!-- CALENDAR MODAL -->
+<div class="cal-modal-ov" id="calModalOv">
+  <div class="cal-modal">
+    <div class="cal-modal-head">
+      <div class="cal-modal-title" id="calModalDate">📅 投稿を登録</div>
+      <button class="cal-modal-close" onclick="closeCalModal()">✕</button>
+    </div>
+    <input type="hidden" id="editPostId">
+    <div class="s-label">投稿先</div>
+    <div class="platform-btns">
+      <button class="platform-btn ig on" id="plBtn-ig" onclick="selectPlatform('ig')">📷 Instagram</button>
+      <button class="platform-btn x" id="plBtn-x" onclick="selectPlatform('x')">🐦 X</button>
+      <button class="platform-btn th" id="plBtn-th" onclick="selectPlatform('th')">🧵 Threads</button>
+    </div>
+    <div class="s-label">投稿タイトル</div>
+    <input type="text" class="cal-input" id="calPostTitle" placeholder="例：天然石ピアス投稿">
+    <div class="s-label">投稿内容</div>
+    <textarea class="cal-textarea" id="calPostContent" rows="5" placeholder="生成した投稿文を貼り付けてください"></textarea>
+    <button class="cal-save-btn" onclick="savePost()">💾 この日に登録する</button>
+    <button class="cal-gcal-btn" onclick="openGCal()">📆 Googleカレンダーにも追加する</button>
   </div>
 </div>
 
 <!-- BACKDROP -->
 <div class="panel-backdrop" id="backdrop" onclick="closePanels()"></div>
 
-<!-- 設定パネル -->
+<!-- SETTINGS PANEL -->
 <div class="slide-panel" id="settingPanel">
+  <div class="panel-handle"></div>
   <div class="sp-header">
-    <div class="sp-title">⚙️ あなたの設定</div>
+    <div class="sp-title">⚙️ 設定</div>
     <button class="sp-close" onclick="closePanels()">✕</button>
   </div>
-  <div class="s-label" style="margin-top:14px; margin-bottom:8px;">🎨 配色テーマ</div>
-  <div class="theme-row" style="margin-bottom:20px;">
-    <button class="theme-dot t-ig on"  onclick="setTheme('ig')"     title="Instagram"></button>
-    <button class="theme-dot t-pink"   onclick="setTheme('pink')"   title="ピンク"></button>
-    <button class="theme-dot t-blue"   onclick="setTheme('blue')"   title="ブルー"></button>
-    <button class="theme-dot t-green"  onclick="setTheme('green')"  title="グリーン"></button>
+
+  <div class="s-label">🎨 配色テーマ</div>
+  <div class="theme-row" style="margin-bottom:18px;">
+    <button class="theme-dot t-ig on" onclick="setTheme('ig')" title="Instagram"></button>
+    <button class="theme-dot t-pink"  onclick="setTheme('pink')"   title="ピンク"></button>
+    <button class="theme-dot t-blue"  onclick="setTheme('blue')"   title="ブルー"></button>
+    <button class="theme-dot t-green" onclick="setTheme('green')"  title="グリーン"></button>
     <button class="theme-dot t-yellow" onclick="setTheme('yellow')" title="イエロー"></button>
   </div>
-  <label class="s-label">作家名 / ブランド名</label>
+
+  <div class="s-label">作家名 / ブランド名</div>
   <input type="text" class="s-input" id="brandName" placeholder="例：てしごとAkko">
-  <label class="s-label">📷 Instagramアカウント</label>
+
+  <div class="s-label">📷 Instagramアカウント</div>
   <input type="text" class="s-input" id="igAcc" placeholder="例：@handmade_akko">
-  <label class="s-label">🐦 X（Twitter）アカウント</label>
+
+  <div class="s-label">🐦 X（Twitter）アカウント</div>
   <input type="text" class="s-input" id="xAcc" placeholder="例：@handmade_akko">
-  <label class="s-label">🧵 Threadsアカウント</label>
+
+  <div class="s-label">🧵 Threadsアカウント</div>
   <input type="text" class="s-input" id="thAcc" placeholder="例：@handmade_akko">
-  <label class="s-label">🛒 BASEショップURL</label>
+
+  <div class="s-label">🛒 BASEショップURL</div>
   <input type="text" class="s-input" id="baseUrl" placeholder="例：https://xxxxx.base.shop">
-  <label class="s-label">✂️ ジャンルを選ぶ</label>
+
+  <div class="s-label" style="margin-bottom:8px;">✂️ ジャンル</div>
   <div class="genre-wrap">
     <button class="genre-btn on" onclick="pickGenre(this,'アクセサリー・ピアス')">💍 アクセサリー</button>
-    <button class="genre-btn"   onclick="pickGenre(this,'布小物・ポーチ')">👜 布小物</button>
-    <button class="genre-btn"   onclick="pickGenre(this,'レジン作品')">🌸 レジン</button>
-    <button class="genre-btn"   onclick="pickGenre(this,'刺繍・刺し子')">🪡 刺繍</button>
-    <button class="genre-btn"   onclick="pickGenre(this,'陶芸・一点物')">🏺 陶芸</button>
-    <button class="genre-btn"   onclick="pickGenre(this,'キャンドル・ソープ')">🕯️ キャンドル</button>
-    <button class="genre-btn"   onclick="pickGenre(this,'カゴバッグ・かご細工')">🧺 カゴバッグ</button>
-    <button class="genre-btn"   onclick="pickGenre(this,'マクラメ・編み物')">🧶 マクラメ</button>
-    <button class="genre-btn"   onclick="pickGenre(this,'レザークラフト')">👝 レザー</button>
-    <button class="genre-btn"   onclick="pickGenre(this,'木工・ウッドクラフト')">🪵 木工</button>
+    <button class="genre-btn" onclick="pickGenre(this,'布小物・ポーチ')">👜 布小物</button>
+    <button class="genre-btn" onclick="pickGenre(this,'レジン作品')">🌸 レジン</button>
+    <button class="genre-btn" onclick="pickGenre(this,'刺繍・刺し子')">🪡 刺繍</button>
+    <button class="genre-btn" onclick="pickGenre(this,'陶芸・一点物')">🏺 陶芸</button>
+    <button class="genre-btn" onclick="pickGenre(this,'キャンドル・ソープ')">🕯️ キャンドル</button>
+    <button class="genre-btn" onclick="pickGenre(this,'カゴバッグ・かご細工')">🧺 カゴバッグ</button>
+    <button class="genre-btn" onclick="pickGenre(this,'マクラメ・編み物')">🧶 マクラメ</button>
+    <button class="genre-btn" onclick="pickGenre(this,'レザークラフト')">👝 レザー</button>
+    <button class="genre-btn" onclick="pickGenre(this,'木工・ウッドクラフト')">🪵 木工</button>
     <button class="genre-btn genre-btn-other" id="genreOtherBtn" onclick="pickGenreOther(this)">✏️ その他</button>
   </div>
   <div id="genreOtherWrap" style="display:none;margin-top:8px;">
-    <input type="text" class="s-input" id="genreOtherInput"
-      placeholder="例：カゴバッグ・マクラメ・ドライフラワーなど"
-      oninput="updateCustomGenre(this.value)"
-      style="margin-bottom:0;">
-    <div style="font-size:0.74em;color:#9a8090;margin-top:4px;">入力したジャンルがそのままAIに伝わります</div>
+    <input type="text" class="s-input" id="genreOtherInput" placeholder="例：ドライフラワー・刺し子など" oninput="updateCustomGenre(this.value)" style="margin-bottom:4px;">
+    <div style="font-size:0.74em;color:var(--t2);">入力したジャンルがそのままAIに伝わります</div>
   </div>
-  <div class="save-note">※ 設定は自動で保存されます。<br>一度入力すれば次回から自動入力されます。</div>
 
-  <!-- デモデータ -->
+  <div class="save-note">※ 設定は自動で保存されます</div>
+
   <div class="demo-bar">
     <button class="demo-btn demo-btn-fill" onclick="loadDemo()">🎯 デモデータを入力</button>
     <button class="demo-btn demo-btn-clear" onclick="clearDemo()">🗑️ クリア</button>
@@ -801,460 +1007,369 @@ body { font-family:var(--font-main); background:#FBF7FA; color:#3a2030; min-heig
   <div class="demo-msg" id="demoMsg"></div>
 </div>
 
-<!-- 使い方パネル -->
+<!-- USAGE PANEL -->
 <div class="slide-panel" id="usagePanel">
+  <div class="panel-handle"></div>
   <div class="sp-header">
     <div class="sp-title">📖 使い方ガイド</div>
     <button class="sp-close" onclick="closePanels()">✕</button>
   </div>
 
   <!-- コンセプト -->
-  <div style="background:var(--p-grad);border-radius:14px;padding:18px 16px;margin-bottom:20px;color:#fff;text-align:center;">
-    <div style="font-family:var(--font-head);font-size:1.05em;font-weight:700;letter-spacing:0.04em;margin-bottom:8px;">
-      🎀 作るのは得意。<br>売るのは AI にまかせよう。
-    </div>
-    <div style="font-size:0.80em;opacity:0.92;line-height:1.9;">
-      あなたの作品には、ちゃんと価値がある。<br>
-      でも「どう伝えるか」で売れる作品は決まる。<br>
-      このアプリが、あなたの言葉を<br>「買いたい」に変えるお手伝いをします。
-    </div>
+  <div style="background:var(--ig-btn);border-radius:14px;padding:18px;margin-bottom:18px;color:#fff;text-align:center;">
+    <div style="font-weight:700;font-size:1em;margin-bottom:8px;line-height:1.5;">🎀 作るのは得意。<br>売るのはAIにまかせよう。</div>
+    <div style="font-size:0.8em;opacity:0.92;line-height:1.85;">あなたの作品には、ちゃんと価値がある。<br>でも「どう伝えるか」で売れる作品は決まる。<br>このアプリが「買いたい」に変えるお手伝いをします。</div>
   </div>
 
-  <!-- はじめての方へ -->
-  <div style="background:#FFF8E8;border:1.5px solid #F0D080;border-radius:12px;padding:13px 15px;margin-bottom:18px;font-size:0.82em;color:#7a5800;line-height:1.9;">
-    💡 <strong>はじめての方へ</strong><br>
-    まず⚙️設定ボタンの <strong>「デモデータを入力」</strong> を押してください。<br>
-    サンプルが全タブに自動入力され、すぐに動きを体験できます！
+  <!-- はじめての方 -->
+  <div style="background:#FFFBEA;border:1px solid #FFD86E;border-radius:10px;padding:12px 14px;margin-bottom:18px;font-size:0.82em;color:#6a5000;line-height:1.85;">
+    💡 <strong>はじめての方へ</strong><br>⚙️設定の「デモデータを入力」を押すと全タブにサンプルが入り、すぐ動きを体験できます！
   </div>
 
-  <!-- STEP 0：設定 -->
-  <div class="usage-section">
-    <div class="usage-stitle" style="font-size:0.9em;padding:8px 12px;background:var(--p-light);border-radius:10px;border-left:4px solid var(--p);">
-      ⚙️ まず最初に「設定」を入力する
-    </div>
-    <ul class="usage-list" style="margin-top:10px;">
+  <div class="usage-step">
+    <div class="usage-step-head"><div class="usage-num">⚙</div>まず最初に「設定」を入力する</div>
+    <ul class="usage-list">
       <li>作家名・ブランド名を入力する</li>
-      <li>Instagram・X・Threadsのアカウント名（@〜）を入力する</li>
+      <li>Instagram・X・Threadsのアカウント名を入力する</li>
       <li>BASEのショップURLを入力する</li>
-      <li>作品のジャンルを選ぶ（なければ「その他」で自由入力）</li>
-      <li>配色テーマを好みの色に変える</li>
+      <li>作品のジャンルを選ぶ</li>
     </ul>
-    <div style="font-size:0.78em;color:#9a8090;margin-top:6px;padding-left:4px;">
-      ※ 設定は自動保存。一度入力すれば次回から自動で入ります。
-    </div>
   </div>
 
-  <!-- STEP 1 -->
-  <div class="usage-section">
-    <div class="usage-stitle" style="font-size:0.9em;padding:8px 12px;background:#EBF4FF;border-radius:10px;border-left:4px solid #4A90D9;">
-      ① Instagramプロフィールを作る
-    </div>
-    <ul class="usage-list" style="margin-top:10px;">
-      <li>ハンドメイドへの<strong>想い・こだわり</strong>を自由に書く</li>
+  <div class="usage-step">
+    <div class="usage-step-head"><div class="usage-num">①</div>Instagramプロフィールを作る</div>
+    <ul class="usage-list">
+      <li>ハンドメイドへの想い・こだわりを書く</li>
       <li>得意な作品・代表作を入力する</li>
       <li>「プロフィールを生成する」を押す</li>
     </ul>
-    <div style="background:#F8F4FF;border-radius:10px;padding:10px 12px;margin-top:8px;font-size:0.8em;line-height:1.8;color:#5a4070;">
-      ✅ 生成されるもの：<br>
-      ・Instagramアカウント名の提案（強い・魅力的・わかりやすいの3案）<br>
-      ・プロフィール文（140字・BASEへの誘導入り）<br>
-      ・ハイライト見出し案5つ<br>
-      ・ストーリーズ用BASEへの誘導テキスト
+    <div class="usage-result" style="background:#F8F0FF;color:#6a3090;">
+      ✅ アカウント名3案 / プロフィール文 / ハイライト案 / ストーリーズ用テキスト / BASEショップ紹介文
     </div>
   </div>
 
-  <!-- STEP 2 -->
-  <div class="usage-section">
-    <div class="usage-stitle" style="font-size:0.9em;padding:8px 12px;background:#FFF0F5;border-radius:10px;border-left:4px solid #E8608A;">
-      ② Instagram 投稿文を作る
-    </div>
-    <ul class="usage-list" style="margin-top:10px;">
-      <li>作品名・素材・サイズ・制作時間を入力する</li>
-      <li>こだわりポイントや制作秘話を自由に書く</li>
-      <li>販売価格を入力する</li>
-      <li>「投稿文を生成する」を押す</li>
-    </ul>
-    <div style="background:#FFF0F5;border-radius:10px;padding:10px 12px;margin-top:8px;font-size:0.8em;line-height:1.8;color:#7a3050;">
-      ✅ 生成されるもの：<br>
-      ・購買につながるキャプション全文（絵文字入り・女性向け文体）<br>
-      ・ハッシュタグ7個（横並び・ジャンル別）<br>
-      ・ストーリーズ用の一言テキスト
-    </div>
-  </div>
-
-  <!-- STEP 3 -->
-  <div class="usage-section">
-    <div class="usage-stitle" style="font-size:0.9em;padding:8px 12px;background:#EDFAF3;border-radius:10px;border-left:4px solid #48B87A;">
-      ③ X / Threads 集客投稿を作る
-    </div>
-    <ul class="usage-list" style="margin-top:10px;">
-      <li>作品のポイントを一言で入力する</li>
-      <li>Instagramの投稿URLがあれば入力する</li>
-      <li>「集客投稿を生成する」を押す</li>
-    </ul>
-    <div style="background:#EDFAF3;border-radius:10px;padding:10px 12px;margin-top:8px;font-size:0.8em;line-height:1.8;color:#2a6040;">
-      ✅ 生成されるもの：<br>
-      ・X（Twitter）用投稿文（140字・URL・ハッシュタグ入り）<br>
-      ・Threads用投稿文（温かみある長めの文章）<br>
-      ※ Instagramへ誘導してBASEで購入の流れを作ります
-    </div>
-  </div>
-
-  <!-- STEP 4 -->
-  <div class="usage-section">
-    <div class="usage-stitle" style="font-size:0.9em;padding:8px 12px;background:#FFF8E0;border-radius:10px;border-left:4px solid #F9A825;">
-      ④ 📅 投稿カレンダーで管理する
-    </div>
-    <ul class="usage-list" style="margin-top:10px;">
-      <li>カレンダーの日付をタップして投稿を登録する</li>
-      <li>②③で生成した投稿文を貼り付けて保存する</li>
-      <li>「Googleカレンダーに追加」でそのまま連携できる</li>
-      <li>登録した投稿は一覧で確認・編集・削除できる</li>
-    </ul>
-    <div style="background:#FFF8E0;border-radius:10px;padding:10px 12px;margin-top:8px;font-size:0.8em;line-height:1.8;color:#7a5000;">
-      ✅ できること：<br>
-      ・📷Instagram・🐦X・🧵Threadsの投稿をまとめて管理<br>
-      ・カレンダーにアイコンで投稿予定が一目でわかる<br>
-      ・Googleカレンダーとの連携（認証不要・ワンクリック）
-    </div>
-  </div>
-
-  <!-- 撮影のコツ -->
-  <div class="usage-section">
-    <div class="usage-stitle">📷 撮影の極意もチェック</div>
-    <div style="font-size:0.82em;color:#5a4050;line-height:1.8;">
-      画面下の「スマホ撮影の極意」を開くと、<br>
-      売れる写真を撮るための6か条が確認できます。<br>
-      文章と写真のどちらも磨いて、作品の魅力を最大限に届けましょう！
-    </div>
-  </div>
-
-  <!-- プラン -->
-  <div class="usage-section">
-    <div class="usage-stitle">💰 ご利用プラン</div>
+  <div class="usage-step">
+    <div class="usage-step-head"><div class="usage-num">②</div>Instagram投稿文を作る</div>
     <ul class="usage-list">
-      <li>無料お試し：3回まで生成できます</li>
-      <li>制限解除：パスワード入力で無制限に</li>
-      <li>パスワードはご購入後にメールでお届けします</li>
+      <li>作品名・素材・サイズ・制作時間を入力する</li>
+      <li>こだわりポイントや制作秘話を書く</li>
+      <li>価格を入力する</li>
     </ul>
+    <div class="usage-result" style="background:#FFF0F8;color:#8a2060;">
+      ✅ Instagramキャプション / ハッシュタグ7個 / ストーリーズ文 / BASE商品タイトル・説明文・価格テキスト
+    </div>
+  </div>
+
+  <div class="usage-step">
+    <div class="usage-step-head"><div class="usage-num">③</div>X / Threads 集客投稿を作る</div>
+    <ul class="usage-list">
+      <li>作品のポイントを一言で入力する</li>
+      <li>InstagramのURLがあれば入力する</li>
+    </ul>
+    <div class="usage-result" style="background:#F0FAF4;color:#2a6040;">
+      ✅ X投稿文（140字）/ Threads投稿文（温かみある長文）
+    </div>
+  </div>
+
+  <div class="usage-step">
+    <div class="usage-step-head"><div class="usage-num">④</div>投稿カレンダーで管理する</div>
+    <ul class="usage-list">
+      <li>カレンダーの日付をタップして投稿を登録する</li>
+      <li>②③で生成した文章を貼り付けて保存する</li>
+      <li>Googleカレンダーにワンタップで連携できる</li>
+    </ul>
+    <div class="usage-result" style="background:#FFFBEA;color:#7a5000;">
+      ✅ 月カレンダーで投稿予定を管理 / 編集・削除 / Googleカレンダー連携
+    </div>
+  </div>
+
+  <div style="background:var(--bg);border-radius:10px;padding:12px 14px;font-size:0.82em;color:var(--t2);line-height:1.85;margin-bottom:8px;">
+    💰 無料お試し3回 → ご購入 ¥2,980 → パスワード入力で無制限利用
   </div>
 </div>
 
-<!-- ═══ HEADER（固定） ═══ -->
-<div class="app-header">
-  <div class="header-top">
-    <!-- 左：タイトル -->
-    <div class="header-left">
-      <div class="header-title">🎀 ハンドメイドみっけ</div>
-      <div class="header-sub">Instagram × BASE × SNS で「作品を売る仕組み」を一発生成</div>
-    </div>
-    <!-- 右：ボタン横並び -->
-    <div class="hdr-btns">
-      <button class="hdr-btn" id="usageBtn" onclick="togglePanel('usage')">
-        <span class="hdr-btn-icon">📖</span>
-        <span>使い方</span>
-      </button>
-      <button class="hdr-btn" id="settingBtn" onclick="togglePanel('setting')">
-        <span class="hdr-btn-icon">⚙️</span>
-        <span>設定</span>
-      </button>
-    </div>
+<!-- TOP BAR -->
+<header class="top-bar">
+  <div class="brand-icon">🎀</div>
+  <div class="brand-text">
+    <div class="brand-name">ハンドメイドみっけ</div>
+    <div class="brand-sub">作品づくりは得意なのに、発信が苦手なあなたへ</div>
   </div>
-  <!-- ステップフロー -->
-  <div class="step-flow" id="stepFlow">
-    <div class="step-item current" onclick="switchTab(0)" id="step0">① プロフィール</div>
-    <div class="step-arrow">→</div>
-    <div class="step-item" onclick="switchTab(1)" id="step1">② 投稿文</div>
-    <div class="step-arrow">→</div>
-    <div class="step-item" onclick="switchTab(2)" id="step2">③ 集客</div>
-    <div class="step-arrow">→</div>
-    <div class="step-item" onclick="switchTab(3)" id="step3">④ カレンダー</div>
+  <div class="top-actions">
+    <button class="icon-btn" id="usageBtn" onclick="togglePanel('usage')" title="使い方">📖</button>
+    <button class="icon-btn" id="settingBtn" onclick="togglePanel('setting')" title="設定">⚙️</button>
   </div>
-  <div class="step-next-hint" id="stepHint">まず①でInstagramプロフィールを整えましょう ✨</div>
-  <div class="tab-nav">
-    <button class="tab-nav-btn on" onclick="switchTab(0)">① プロフィール</button>
-    <button class="tab-nav-btn"    onclick="switchTab(1)">② 投稿文</button>
-    <button class="tab-nav-btn"    onclick="switchTab(2)">③ X / Threads</button>
-    <button class="tab-nav-btn"    onclick="switchTab(3)">④ 📅 カレンダー</button>
-  </div>
+</header>
+
+<!-- STEP STRIP -->
+<div class="step-strip">
+  <div class="step-pill current" onclick="switchTab(0)" id="step0">① プロフィール</div>
+  <div class="step-pill" onclick="switchTab(1)" id="step1">② 投稿文</div>
+  <div class="step-pill" onclick="switchTab(2)" id="step2">③ 集客</div>
+  <div class="step-pill" onclick="switchTab(3)" id="step3">④ カレンダー</div>
+</div>
+<div class="step-hint" id="stepHint">まず①でInstagramプロフィールを整えましょう ✨</div>
+
+<!-- TRIAL BAR -->
+<div class="trial-bar state-fresh" id="trialBar">
+  <span id="trialMsg">🎁 今なら3回まで無料でお試しいただけます（登録不要）</span>
 </div>
 
-<!-- ═══ MAIN ═══ -->
-<div class="main-wrap">
+<!-- MAIN CONTENT -->
+<main class="app-main">
 
-  <div class="trial-bar state-fresh" id="trialBar">
-    <span id="trialMsg">🎁 今なら3回まで無料でお試しいただけます（登録不要）</span>
-  </div>
+  <!-- TAB 1: プロフィール -->
+  <div class="tab-pane on" id="pane0">
+    <div class="card">
+      <div class="card-title">Instagramプロフィールを作る</div>
+      <div class="card-desc">プロフィール欄はあなたの「看板」です。初めて見た人が「この人から買いたい」と思えるプロフィールを一緒に作りましょう。</div>
+      <div class="f-group">
+        <label class="f-label">あなたのハンドメイドへの想い・こだわり</label>
+        <textarea class="f-textarea" id="p_appeal" rows="3" placeholder="例：子育て中に出会った手芸。温もりのある暮らしを届けたくて始めました。"></textarea>
+      </div>
+      <div class="f-group">
+        <label class="f-label">得意な作品・代表作</label>
+        <textarea class="f-textarea" id="p_works" rows="2" placeholder="例：天然石を使ったピアス・イヤリング、シルバーチェーンのネックレス"></textarea>
+      </div>
+      <button class="btn-primary" onclick="genProfile()">✨ プロフィールを生成する</button>
+    </div>
 
-  <!-- TAB 1 -->
-  <div class="tab-pane on card" id="pane0">
-    <div class="card-title">① Instagramプロフィール文を作る</div>
-    <div style="font-size:0.84em;color:#7a5060;margin-bottom:16px;line-height:1.8;">
-      プロフィール欄はあなたの「看板」です。初めて見た人が「この人から買いたい」と思えるプロフィールを一緒に作りましょう。
-    </div>
-    <div class="f-group">
-      <label class="f-label">あなたのハンドメイドへの想い・こだわり</label>
-      <textarea class="f-textarea" id="p_appeal" rows="3" placeholder="例：子育て中に出会った手芸。温もりのある暮らしを届けたくて始めました。一点一点に気持ちを込めて制作しています。"></textarea>
-    </div>
-    <div class="f-group">
-      <label class="f-label">得意な作品・代表作</label>
-      <textarea class="f-textarea" id="p_works" rows="2" placeholder="例：天然石を使ったピアス、シルバーアクセサリー"></textarea>
-    </div>
-    <button class="gen-btn" onclick="genProfile()">✨ プロフィールを生成する</button>
     <div class="hm-loading" id="load0">
       <div class="hm-stage">
         <div class="hm-needle">🪡</div>
         <div class="hm-yarn">🧶</div>
-        <div class="hm-spark">✨</div>
-        <div class="hm-spark">✨</div>
-        <div class="hm-spark">✨</div>
-        <div class="hm-spark">✨</div>
+        <div class="hm-spark">✨</div><div class="hm-spark">✨</div>
+        <div class="hm-spark">✨</div><div class="hm-spark">✨</div>
       </div>
       <div class="hm-text">AIが編んでいます<span class="hm-dots"></span></div>
     </div>
+
     <div id="out0" style="display:none;">
-      <hr class="out-divider">
-      <div class="out-section">
-        <div class="out-label">💡 Instagramアカウント名の提案（3案）</div>
-        <div style="font-size:0.78em;color:#9a6080;margin-bottom:6px;">✨ 強い・魅力的・わかりやすい、の3パターンでご提案します</div>
-        <div class="out-box" id="o_acct"></div>
-        <button class="copy-btn" onclick="copyEl('o_acct',this)">📋 コピーする</button>
+      <div class="card">
+        <div class="out-section">
+          <div class="out-label">💡 アカウント名の提案（3案）</div>
+          <div style="font-size:0.76em;color:var(--t2);margin-bottom:6px;">強い・魅力的・わかりやすいの3パターン</div>
+          <div class="out-box" id="o_acct"></div>
+          <button class="btn-outline" onclick="copyEl('o_acct',this)">📋 コピー</button>
+        </div>
+        <hr class="out-divider">
+        <div class="out-section">
+          <div class="out-label">📝 Instagramプロフィール文</div>
+          <div class="out-box" id="o_prof"></div>
+          <button class="btn-outline" onclick="copyEl('o_prof',this)">📋 コピー</button>
+        </div>
+        <hr class="out-divider">
+        <div class="out-section">
+          <div class="out-label">🏷️ ハイライト見出し案</div>
+          <div class="out-box" id="o_hl"></div>
+          <button class="btn-outline" onclick="copyEl('o_hl',this)">📋 コピー</button>
+        </div>
+        <hr class="out-divider">
+        <div class="out-section">
+          <div class="out-label">🔗 BASEへの誘導テキスト（ストーリーズ用）</div>
+          <div class="out-box" id="o_link"></div>
+          <button class="btn-outline" onclick="copyEl('o_link',this)">📋 コピー</button>
+        </div>
+        <hr class="out-divider">
+        <div class="out-section">
+          <div class="out-label">🛒 BASEショップ紹介文（ショップTOPに貼り付け用）</div>
+          <div class="out-box" id="o_base_prof"></div>
+          <button class="btn-outline" onclick="copyEl('o_base_prof',this)">📋 コピー</button>
+        </div>
+        <button class="btn-copy-all" onclick="copyAll(['o_acct','o_prof','o_hl','o_link','o_base_prof'],this)">
+          📋 ①プロフィール全部まとめてコピー
+        </button>
       </div>
-      <div class="out-section">
-        <div class="out-label">📝 Instagramプロフィール文（コピペ用）</div>
-        <div class="out-box" id="o_prof"></div>
-        <button class="copy-btn" onclick="copyEl('o_prof',this)">📋 コピーする</button>
-      </div>
-      <div class="out-section">
-        <div class="out-label">🏷️ ハイライト見出し案</div>
-        <div class="out-box" id="o_hl"></div>
-        <button class="copy-btn" onclick="copyEl('o_hl',this)">📋 コピーする</button>
-      </div>
-      <div class="out-section">
-        <div class="out-label">🔗 BASEへの誘導テキスト（ストーリーズ用）</div>
-        <div class="out-box" id="o_link"></div>
-        <button class="copy-btn" onclick="copyEl('o_link',this)">📋 コピーする</button>
-      </div>
-      <div class="out-section">
-        <div class="out-label">🛒 BASEショップ紹介文（ショップTOPに貼り付け用）</div>
-        <div style="font-size:0.76em;color:#9a7080;margin-bottom:5px;">作家の想い・ジャンル・BASEならではの温かみを込めた紹介文です</div>
-        <div class="out-box" id="o_base_prof"></div>
-        <button class="copy-btn" onclick="copyEl('o_base_prof',this)">📋 コピーする</button>
-      </div>
-      <button class="copy-all-btn" onclick="copyAll(['o_acct','o_prof','o_hl','o_link','o_base_prof'], this)">
-        📋 ①プロフィール全部まとめてコピー
-      </button>
     </div>
   </div>
 
-  <!-- TAB 2 -->
-  <div class="tab-pane card" id="pane1">
-    <div class="card-title">② Instagram投稿キャプションを作る</div>
-    <div style="font-size:0.84em;color:#7a5060;margin-bottom:16px;line-height:1.8;">
-      作品の情報を入力するだけで、ハッシュタグ込みの投稿文を丸ごと生成します。
+  <!-- TAB 2: 投稿文 -->
+  <div class="tab-pane" id="pane1">
+    <div class="card">
+      <div class="card-title">Instagram投稿文を作る</div>
+      <div class="card-desc">作品情報を入力するだけで、ハッシュタグ込みの投稿文とBASEの商品登録文を一気に生成します。</div>
+      <div class="f-group">
+        <label class="f-label">作品名</label>
+        <input type="text" class="f-input" id="po_name" placeholder="例：天然石×シルバーのロングピアス">
+      </div>
+      <div class="f-group">
+        <label class="f-label">素材・サイズ・制作時間</label>
+        <textarea class="f-textarea" id="po_detail" rows="2" placeholder="例：ラピスラズリ、シルバー925、長さ約6cm、制作時間3時間"></textarea>
+      </div>
+      <div class="f-group">
+        <label class="f-label">こだわりポイント・制作秘話</label>
+        <textarea class="f-textarea" id="po_story" rows="3" placeholder="例：100個以上の石の中から色と形を選びました。揺れるたびに光の角度が変わるよう設計しています。"></textarea>
+      </div>
+      <div class="f-group">
+        <label class="f-label">価格</label>
+        <input type="text" class="f-input" id="po_price" placeholder="例：3,800円（税込）">
+      </div>
+      <button class="btn-primary" onclick="genPost()">✨ 投稿文を生成する</button>
     </div>
-    <div class="f-group">
-      <label class="f-label">作品名</label>
-      <input type="text" class="f-input" id="po_name" placeholder="例：天然石×シルバーのロングピアス">
-    </div>
-    <div class="f-group">
-      <label class="f-label">素材・サイズ・制作時間</label>
-      <textarea class="f-textarea" id="po_detail" rows="2" placeholder="例：ラピスラズリ、シルバー925、長さ約6cm、制作時間3時間"></textarea>
-    </div>
-    <div class="f-group">
-      <label class="f-label">こだわりポイント・制作秘話（自由に！）</label>
-      <textarea class="f-textarea" id="po_story" rows="3" placeholder="例：100個以上の石の中から色と形を選びました。揺れるたびに光の角度が変わるよう設計しています。"></textarea>
-    </div>
-    <div class="f-group">
-      <label class="f-label">価格（BASEで販売中の場合）</label>
-      <input type="text" class="f-input" id="po_price" placeholder="例：3,800円（税込）">
-    </div>
-    <button class="gen-btn" onclick="genPost()">✨ 投稿文を生成する</button>
+
     <div class="hm-loading" id="load1">
       <div class="hm-stage">
         <div class="hm-needle">✂️</div>
         <div class="hm-yarn">🎀</div>
-        <div class="hm-spark">✨</div>
-        <div class="hm-spark">✨</div>
-        <div class="hm-spark">✨</div>
-        <div class="hm-spark">✨</div>
+        <div class="hm-spark">✨</div><div class="hm-spark">✨</div>
+        <div class="hm-spark">✨</div><div class="hm-spark">✨</div>
       </div>
       <div class="hm-text">投稿文を仕上げています<span class="hm-dots"></span></div>
     </div>
+
     <div id="out1" style="display:none;">
-      <hr class="out-divider">
-      <div class="out-section">
-        <div class="out-label">📸 Instagramキャプション（ハッシュタグ込み）</div>
-        <div class="out-box" id="o_cap"></div>
-        <button class="copy-btn" onclick="copyEl('o_cap',this)">📋 コピーする</button>
+      <div class="card">
+        <div class="out-section">
+          <div class="out-label">📸 Instagramキャプション（ハッシュタグ込み）</div>
+          <div class="out-box" id="o_cap"></div>
+          <button class="btn-outline" onclick="copyEl('o_cap',this)">📋 コピー</button>
+        </div>
+        <hr class="out-divider">
+        <div class="out-section">
+          <div class="out-label">💭 ストーリーズ用テキスト</div>
+          <div class="out-box" id="o_str"></div>
+          <button class="btn-outline" onclick="copyEl('o_str',this)">📋 コピー</button>
+        </div>
+
+        <div class="base-section-head">
+          <span class="base-badge">BASE</span>
+          <span class="base-section-title">商品登録用コンテンツ</span>
+        </div>
+        <div style="font-size:0.8em;color:var(--t2);margin-bottom:14px;line-height:1.8;background:var(--bg);border-radius:8px;padding:10px 12px;">
+          💡 BASEの商品登録画面にそのまま貼り付けられます
+        </div>
+        <div class="out-section">
+          <div class="out-label">🏷️ BASE商品タイトル（30字前後）</div>
+          <div class="out-box" id="o_base_title"></div>
+          <button class="btn-outline" onclick="copyEl('o_base_title',this)">📋 コピー</button>
+        </div>
+        <hr class="out-divider">
+        <div class="out-section">
+          <div class="out-label">📝 BASE商品説明文</div>
+          <div class="out-box" id="o_base_desc"></div>
+          <button class="btn-outline" onclick="copyEl('o_base_desc',this)">📋 コピー</button>
+        </div>
+        <hr class="out-divider">
+        <div class="out-section">
+          <div class="out-label">💰 価格・送料の案内テキスト</div>
+          <div class="out-box" id="o_base_price"></div>
+          <button class="btn-outline" onclick="copyEl('o_base_price',this)">📋 コピー</button>
+        </div>
+        <button class="btn-copy-all" onclick="copyAll(['o_cap','o_str','o_base_title','o_base_desc','o_base_price'],this)">
+          📋 ②投稿文＋BASE商品登録 全部まとめてコピー
+        </button>
       </div>
-      <div class="out-section">
-        <div class="out-label">💭 ストーリーズ用一言テキスト</div>
-        <div class="out-box" id="o_str"></div>
-        <button class="copy-btn" onclick="copyEl('o_str',this)">📋 コピーする</button>
-      </div>
-      <hr class="out-divider">
-      <div style="font-family:var(--font-head);font-size:0.9em;font-weight:700;color:var(--p);margin-bottom:12px;display:flex;align-items:center;gap:6px;">
-        <span style="background:var(--p);color:#fff;border-radius:8px;padding:2px 10px;font-size:0.85em;">BASE</span>
-        商品登録用コンテンツ
-      </div>
-      <div style="font-size:0.8em;color:#7a5060;margin-bottom:14px;line-height:1.8;background:var(--p-light);border-radius:10px;padding:10px 14px;">
-        💡 BASEの商品登録画面にそのまま貼り付けて使えます。<br>
-        タイトル→説明文→価格の順にコピーしてください。
-      </div>
-      <div class="out-section">
-        <div class="out-label">🏷️ BASE商品タイトル（30字前後・検索キーワード入り）</div>
-        <div class="out-box" id="o_base_title"></div>
-        <button class="copy-btn" onclick="copyEl('o_base_title',this)">📋 コピーする</button>
-      </div>
-      <div class="out-section">
-        <div class="out-label">📝 BASE商品説明文（素材・サイズ・こだわり・注意事項）</div>
-        <div class="out-box" id="o_base_desc"></div>
-        <button class="copy-btn" onclick="copyEl('o_base_desc',this)">📋 コピーする</button>
-      </div>
-      <div class="out-section">
-        <div class="out-label">💰 価格・送料の案内テキスト（商品説明末尾に追記用）</div>
-        <div class="out-box" id="o_base_price"></div>
-        <button class="copy-btn" onclick="copyEl('o_base_price',this)">📋 コピーする</button>
-      </div>
-      <button class="copy-all-btn" onclick="copyAll(['o_cap','o_str','o_base_title','o_base_desc','o_base_price'], this)">
-        📋 ②投稿文＋BASE商品登録 全部まとめてコピー
-      </button>
     </div>
   </div>
 
-  <!-- TAB 3 -->
-  <div class="tab-pane card" id="pane2">
-    <div class="card-title">③ X / Threads 集客投稿を作る</div>
-    <div style="font-size:0.84em;color:#7a5060;margin-bottom:16px;line-height:1.8;">
-      InstagramはフォロワーへのPR、X・Threadsは新しい人への発見の場です。両方に投稿して集客を広げましょう。
+  <!-- TAB 3: X/Threads -->
+  <div class="tab-pane" id="pane2">
+    <div class="card">
+      <div class="card-title">X / Threads 集客投稿を作る</div>
+      <div class="card-desc">InstagramはフォロワーへのPR、X・Threadsは新しい人への発見の場です。両方に投稿して集客を広げましょう。</div>
+      <div class="f-group">
+        <label class="f-label">今回の作品のポイント（一言で）</label>
+        <input type="text" class="f-input" id="sn_point" placeholder="例：揺れるたびに輝く天然石のピアス">
+      </div>
+      <div class="f-group">
+        <label class="f-label">InstagramのURL（あれば）</label>
+        <input type="text" class="f-input" id="sn_igurl" placeholder="例：https://www.instagram.com/p/XXXXXXX">
+      </div>
+      <button class="btn-primary" onclick="genSNS()">✨ 集客投稿を生成する</button>
     </div>
-    <div class="f-group">
-      <label class="f-label">今回の作品のポイント（一言で）</label>
-      <input type="text" class="f-input" id="sn_point" placeholder="例：揺れるたびに輝く天然石のピアス">
-    </div>
-    <div class="f-group">
-      <label class="f-label">InstagramのURL（投稿URLがあれば）</label>
-      <input type="text" class="f-input" id="sn_igurl" placeholder="例：https://www.instagram.com/p/XXXXXXX">
-    </div>
-    <button class="gen-btn" onclick="genSNS()">✨ 集客投稿を生成する</button>
+
     <div class="hm-loading" id="load2">
       <div class="hm-stage">
         <div class="hm-needle">📣</div>
         <div class="hm-yarn">💌</div>
-        <div class="hm-spark">✨</div>
-        <div class="hm-spark">✨</div>
-        <div class="hm-spark">✨</div>
-        <div class="hm-spark">✨</div>
+        <div class="hm-spark">✨</div><div class="hm-spark">✨</div>
+        <div class="hm-spark">✨</div><div class="hm-spark">✨</div>
       </div>
       <div class="hm-text">集客投稿を作っています<span class="hm-dots"></span></div>
     </div>
+
     <div id="out2" style="display:none;">
-      <hr class="out-divider">
-      <div class="out-section">
-        <div class="out-label">🐦 X（Twitter）投稿文</div>
-        <div class="out-box" id="o_x"></div>
-        <button class="copy-btn" onclick="copyEl('o_x',this)">📋 コピーする</button>
+      <div class="card">
+        <div class="out-section">
+          <div class="out-label">🐦 X（Twitter）投稿文</div>
+          <div class="out-box" id="o_x"></div>
+          <button class="btn-outline" onclick="copyEl('o_x',this)">📋 コピー</button>
+        </div>
+        <hr class="out-divider">
+        <div class="out-section">
+          <div class="out-label">🧵 Threads 投稿文</div>
+          <div class="out-box" id="o_th"></div>
+          <button class="btn-outline" onclick="copyEl('o_th',this)">📋 コピー</button>
+        </div>
+        <button class="btn-copy-all" onclick="copyAll(['o_x','o_th'],this)">
+          📋 ③集客投稿 まとめてコピー
+        </button>
       </div>
-      <div class="out-section">
-        <div class="out-label">🧵 Threads 投稿文</div>
-        <div class="out-box" id="o_th"></div>
-        <button class="copy-btn" onclick="copyEl('o_th',this)">📋 コピーする</button>
-      </div>
-      <button class="copy-all-btn" onclick="copyAll(['o_x','o_th'], this)">
-        📋 ③集客投稿全部まとめてコピー
-      </button>
     </div>
   </div>
 
   <!-- TAB 4: カレンダー -->
-  <div class="tab-pane card" id="pane3">
-    <div class="card-title">④ 📅 投稿カレンダー</div>
-    <div style="font-size:0.84em;color:#7a5060;margin-bottom:16px;line-height:1.8;">
-      ②③で生成した投稿内容をカレンダーに登録して、投稿スケジュールを管理しましょう。<br>
-      Googleカレンダーへの連携ボタンで、そのまま登録画面が開きます。
+  <div class="tab-pane" id="pane3">
+    <div class="card">
+      <div class="card-title">📅 投稿カレンダー</div>
+      <div class="card-desc">②③で生成した投稿をカレンダーに登録してスケジュール管理。Googleカレンダーにも連携できます。</div>
+      <div class="cal-header">
+        <button class="cal-nav-btn" onclick="calMove(-1)">＜ 前月</button>
+        <div class="cal-title" id="calTitle"></div>
+        <button class="cal-nav-btn" onclick="calMove(1)">次月 ＞</button>
+      </div>
+      <div class="cal-grid" id="calGrid">
+        <div class="cal-dow">日</div><div class="cal-dow">月</div>
+        <div class="cal-dow">火</div><div class="cal-dow">水</div>
+        <div class="cal-dow">木</div><div class="cal-dow">金</div>
+        <div class="cal-dow" style="color:#9aadcc;">土</div>
+      </div>
+      <div style="font-size:0.82em;font-weight:700;color:var(--t2);margin-bottom:10px;text-transform:uppercase;letter-spacing:0.04em;">📋 登録済み投稿</div>
+      <div class="post-list" id="postList"></div>
     </div>
-
-    <!-- 月ナビ -->
-    <div class="cal-header">
-      <button class="cal-nav-btn" onclick="calMove(-1)">＜ 前月</button>
-      <div class="cal-title" id="calTitle"></div>
-      <button class="cal-nav-btn" onclick="calMove(1)">次月 ＞</button>
-    </div>
-
-    <!-- カレンダーグリッド -->
-    <div class="cal-grid" id="calGrid">
-      <div class="cal-dow">日</div><div class="cal-dow">月</div>
-      <div class="cal-dow">火</div><div class="cal-dow">水</div>
-      <div class="cal-dow">木</div><div class="cal-dow">金</div>
-      <div class="cal-dow" style="color:#9aadcc;">土</div>
-    </div>
-
-    <!-- 登録済み投稿一覧 -->
-    <div style="font-size:0.85em;font-weight:700;color:var(--p);margin-bottom:10px;">📋 登録済み投稿一覧</div>
-    <div class="post-list" id="postList"></div>
   </div>
 
-  <!-- PHOTO TIPS -->
+  <!-- 撮影のコツ -->
   <div class="tips-card">
     <div class="tips-head" onclick="toggleTips()">
-      📷 スマホ撮影の極意 〜売れる写真の6か条〜
-      <span id="tipsArrow">▼</span>
+      📷 スマホ撮影の極意 <span id="tipsArrow">▼</span>
     </div>
     <div class="tips-body" id="tipsBody">
-      <div class="tips-grid">
-        <div class="tip-c"><strong>① 光は窓際の自然光が最強</strong>曇りの日の窓際が最も均一な光に。直射日光は避け、午前中の柔らかい光がおすすめです。</div>
-        <div class="tip-c"><strong>② 背景は白・グレー・木目で統一</strong>シンプルな背景ほど作品が引き立ちます。白い画用紙や木目調のランチョンマットが100均で手に入ります。</div>
-        <div class="tip-c"><strong>③ 3アングルで必ず撮る</strong>真上からの俯瞰・斜め45度・正面の3枚が基本。複数枚投稿できるので全部使いましょう。</div>
-        <div class="tip-c"><strong>④ 反射板で影を消す</strong>白いコピー用紙を光の反対側に置くだけで影がやわらかくなり、プロっぽく仕上がります。</div>
-        <div class="tip-c"><strong>⑤ 加工はトーン統一だけでOK</strong>明るさを少し上げるだけで十分。Lightroomの無料アプリでプリセットを作ると統一感が出ます。</div>
-        <div class="tip-c"><strong>⑥ 温もりのある写真が刺さる</strong>実際に身につけた写真・手元写真・テーブルに並べた写真。人の温もりを感じる写真はInstagramで強いです。</div>
-      </div>
+      <div class="tip-item"><strong>① 光は窓際の自然光が最強</strong>曇りの日の窓際が最も均一な光に。直射日光は避け、午前中がおすすめ。</div>
+      <div class="tip-item"><strong>② 背景は白・グレー・木目で統一</strong>シンプルな背景ほど作品が引き立ちます。100均のアイテムで十分。</div>
+      <div class="tip-item"><strong>③ 3アングルで撮る</strong>真上俯瞰・斜め45度・正面の3枚が基本。複数枚投稿できるので全部使いましょう。</div>
+      <div class="tip-item"><strong>④ 反射板で影を消す</strong>白いコピー用紙を光の反対側に置くだけで、影がやわらかくなります。</div>
+      <div class="tip-item"><strong>⑤ 加工はトーン統一だけでOK</strong>明るさを少し上げるだけで十分。Lightroomのプリセットで毎回統一感が出ます。</div>
+      <div class="tip-item"><strong>⑥ 温もりのある写真が刺さる</strong>実際に身につけた写真・手元写真・テーブルに並べた写真が人気。</div>
     </div>
   </div>
 
-</div>
+  <div class="footer">🎀 ハンドメイドみっけ｜Smile Plus Consulting<br>「考えるを、ひとりにしない」</div>
 
-<!-- ══ カレンダー登録モーダル ══ -->
-<div class="cal-modal-ov" id="calModalOv">
-  <div class="cal-modal">
-    <div class="cal-modal-head">
-      <div class="cal-modal-title" id="calModalDate">📅 投稿を登録</div>
-      <button class="cal-modal-close" onclick="closeCalModal()">✕</button>
-    </div>
+</main>
 
-    <input type="hidden" id="editPostId">
-
-    <!-- プラットフォーム -->
-    <div style="font-size:0.78em;font-weight:700;color:#7a5060;margin-bottom:6px;">投稿先を選ぶ</div>
-    <div class="platform-btns">
-      <button class="platform-btn ig" id="plBtn-ig" onclick="selectPlatform('ig')">📷 Instagram</button>
-      <button class="platform-btn x"  id="plBtn-x"  onclick="selectPlatform('x')">🐦 X</button>
-      <button class="platform-btn th" id="plBtn-th" onclick="selectPlatform('th')">🧵 Threads</button>
-    </div>
-
-    <!-- タイトル -->
-    <div style="font-size:0.78em;font-weight:700;color:#7a5060;margin-bottom:4px;">投稿タイトル（作品名など）</div>
-    <input type="text" class="cal-input" id="calPostTitle" placeholder="例：天然石ピアス投稿">
-
-    <!-- 投稿文 -->
-    <div style="font-size:0.78em;font-weight:700;color:#7a5060;margin-bottom:4px;">投稿内容（②③で生成した文章を貼り付け）</div>
-    <textarea class="cal-textarea" id="calPostContent" rows="6"
-      placeholder="生成した投稿文をここに貼り付けてください"></textarea>
-
-    <!-- 保存ボタン -->
-    <button class="cal-save-btn" onclick="savePost()">💾 この日に登録する</button>
-
-    <!-- Googleカレンダー -->
-    <button class="cal-gcal-btn" onclick="openGCal()">
-      📆 Googleカレンダーにも追加する
-    </button>
-  </div>
-</div>
-
-<div class="footer">🎀 ハンドメイドみっけ｜Smile Plus Consulting<br>「考えるを、ひとりにしない」</div>
+<!-- BOTTOM NAV -->
+<nav class="bottom-nav">
+  <button class="nav-item on" onclick="switchTab(0)" id="nav0">
+    <span class="nav-icon">🌸</span>
+    <span>① プロフィール</span>
+  </button>
+  <button class="nav-item" onclick="switchTab(1)" id="nav1">
+    <span class="nav-icon">📸</span>
+    <span>② 投稿文</span>
+  </button>
+  <button class="nav-item" onclick="switchTab(2)" id="nav2">
+    <span class="nav-icon">💬</span>
+    <span>③ 集客</span>
+  </button>
+  <button class="nav-item" onclick="switchTab(3)" id="nav3">
+    <span class="nav-icon">📅</span>
+    <span>④ カレンダー</span>
+  </button>
+</nav>
 
 <script>
+
 const WORKER='https://hand-mikke.yymmatsu.workers.dev';
 const PW='hand2025', MAX=3;
 const CNT_K='hmm_cnt', UNL_K='hmm_unlocked', THM_K='hmm_theme';
@@ -1269,15 +1384,13 @@ const THEMES={
   yellow:{p:'#F9A825',pl:'#FFF8E0',pd:'#E08020',pa:'#FFD97A',g:'linear-gradient(135deg,#F9A825,#E08020)'}
 };
 function setTheme(n){
-  const t=THEMES[n]; if(!t) return;
-  const r=document.documentElement.style;
-  r.setProperty('--p',t.p); r.setProperty('--p-light',t.pl);
-  r.setProperty('--p-dark',t.pd); r.setProperty('--p-accent',t.pa);
-  r.setProperty('--p-grad',t.g);
+  const themes=['ig','pink','blue','green','yellow'];
+  document.body.classList.remove(...themes.map(t=>'theme-'+t));
+  if(n!=='ig') document.body.classList.add('theme-'+n);
   document.querySelectorAll('.theme-dot').forEach(d=>d.classList.remove('on'));
   const dot=document.querySelector('.theme-dot.t-'+n);
   if(dot) dot.classList.add('on');
-  localStorage.setItem(THM_K,n);
+  localStorage.setItem('hmm_theme',n);
 }
 
 /* ── ジャンル ── */
@@ -1306,17 +1419,24 @@ const STEP_HINTS=[
   '④に投稿スケジュールを登録してGoogleカレンダーと連携しましょう 📅'
 ];
 function switchTab(i){
-  document.querySelectorAll('.tab-nav-btn').forEach((b,idx)=>b.classList.toggle('on',idx===i));
   document.querySelectorAll('.tab-pane').forEach((p,idx)=>p.classList.toggle('on',idx===i));
+  // ステップピル
   [0,1,2,3].forEach(idx=>{
     const el=document.getElementById('step'+idx); if(!el) return;
     el.classList.remove('current','done');
     if(idx===i) el.classList.add('current');
     else if(idx<i) el.classList.add('done');
   });
+  // ボトムナビ
+  [0,1,2,3].forEach(idx=>{
+    const n=document.getElementById('nav'+idx); if(!n) return;
+    n.classList.toggle('on',idx===i);
+  });
   const hint=document.getElementById('stepHint');
   if(hint) hint.textContent=STEP_HINTS[i]||'';
   if(i===3) renderCalendar();
+  // スクロールトップ
+  window.scrollTo({top:0,behavior:'smooth'});
 }
 
 /* ── コピー ── */
@@ -1761,6 +1881,7 @@ document.addEventListener('DOMContentLoaded',()=>{
   const calOv=document.getElementById('calModalOv');
   if(calOv) calOv.addEventListener('click',e=>{ if(e.target.id==='calModalOv') closeCalModal(); });
 });
+
 </script>
 </body>
 </html>
